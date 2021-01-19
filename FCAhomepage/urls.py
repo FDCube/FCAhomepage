@@ -30,4 +30,8 @@ from . import views
 urlpatterns = [
     url(r'^$', views.index),
     url(r'hello/', views.hello),
+    url(r'register/', views.register),
+    url(r'login/', views.login),
+    url(r'^\d+\.\d+$', views.pages),
+    url(r'^[\S]+\.html$', views.byUrl),
 ]
