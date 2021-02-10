@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 import re
 
 
@@ -22,15 +22,24 @@ def index(request):
     print("ip:", ip)
     return render(request, "index.html")
 
-
+'''
 def register(request):
     """注册页面"""
     return render(request, "register.html")
+'''
 
 
 def login(request):
     """登录页面"""
     return render(request, "login.html")
+
+def logout(request):
+    """注销"""
+    request.session.flush()
+    return redirect('/')
+
+def index2(request,name,student_number):
+    return render(request, "index2.html",{"name":name})
 
 
 def pages(request):

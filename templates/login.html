@@ -6,5 +6,15 @@
 </head>
 <body>
 <h1>登录FCA</h1>
+
+<form action="/login_action/"  method="get">
+    学号: <input type="text" id = "student_number" name="student_number" value={{ student_number }}> <span style= "color:red;" id = 'check1' name="check1">{{ check1 }}</span> <br><br>
+    密码：<input type="password" id = 'passwd' name="passwd"> <span style= "color:red;" id = 'check2' name="check2">{{ check2 }}</span> <br><br>
+
+    <button type="submit" id='submit'>登录</button>
+</form>
+
+
+
 </body>
 </html>

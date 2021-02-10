@@ -32,6 +32,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'database',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,9 +77,14 @@ WSGI_APPLICATION = 'FCAhomepage.wsgi.application'
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    'default':
+    {
+        'ENGINE': 'django.db.backends.mysql',    # 数据库引擎
+        'NAME': 'polardb_mysql_zl2048', # 数据库名称
+        'HOST': 'pc-bp18rn0tqu85a1600-public.rwlb.rds.aliyuncs.com', # 数据库地址，本机 ip 地址 127.0.0.1
+        'PORT': 3306, # 端口
+        'USER': 'lab_1693260529',  # 数据库用户名
+        'PASSWORD': 'e939cbe1ea4a_#@Aa', # 数据库密码
     }
 }
 

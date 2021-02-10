@@ -6,5 +6,51 @@
 </head>
 <body>
 <h1>注册FCA账户</h1>
+
+<form action="/register/"  method="get">
+
+    学号: <input type="text" id = "student_number" name="student_number"> <span style= "color:red;" id = 'check1'>*</span> <br><br>
+    姓名: <input type="text" id = "name" name="name"> <span style= "color:red;" id = 'check2'>*</span> <br><br>
+    院系：<input type="text" id = 'college' name="college"><br><br>
+    专业：<input type="text" id = 'major' name="major"><br><br>
+    密码：<input type="password" id = 'passwd' name="passwd"> <span style= "color:red;" id = 'check3'>*</span> <br><br>
+    确认密码：<input type="password" id = 'passwd2' name="passwd2"> <br><br>
+
+    <button type="button" id='submit'>确认注册</button>
+    <!--input type="submit" value="确认注册" id="submit"-->
+</form>
+
+<script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function(){
+      $("#submit").click(function(){
+        //获取输入的注册信息
+        var a = $("#student_number").val();
+        var b = $("#name").val();
+        var c = $("#college").val();
+        var d = $("#major").val();
+        var e = $("#passwd").val();
+        var f = $("#passwd2").val();
+        //逐一检查，然后保存
+        $.get("/register/",{'a':a }, function(ret){
+            $('#check1').html(ret)
+        });
+        $.get("/register/",{'b':b }, function(ret){
+            $('#check2').html(ret);
+        });
+        $.get("/register/",{'e':e, 'f':f }, function(ret){
+            $('#check3').html(ret);
+        });
+        $.get("/register/",{'a':a,'b':b, 'c':c, 'd':d ,'e':e, 'f':f}, function(ret){
+            if (ret == 'success'){
+                con=confirm("注册成功！");
+                if (con == true)window.location.href="/index.html";
+            }
+        })
+      });
+    });
+</script>
+
+
 </body>
 </html>

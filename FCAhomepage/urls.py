@@ -24,14 +24,24 @@ Including another URLconf
 
 
 from django.conf.urls import url
+from django.contrib import admin
+from django.urls import include, path
 
-from . import views
+from . import views,testdb,register,login
 
 urlpatterns = [
     url(r'^$', views.index),
     url(r'hello/', views.hello),
-    url(r'register/', views.register),
-    url(r'login/', views.login),
+    #url(r'register/', views.register),
+    url(r'^login/$', views.login),
     url(r'^\d+\.\d+$', views.pages),
     url(r'^[\S]+\.html$', views.byUrl),
+    path('database/', include('database.urls')),
+    path('testdb/', testdb.testdb),
+    path('admin/', admin.site.urls),
+    url(r'^register_form/$', register.register_form),
+    url(r'^register/$', register.register),
+    url(r'^login_action/$', login.login_action),
+    path('index2/<name>/<student_number>',views.index2,name='index2'),
+    url(r'^logout/$', views.logout),
 ]
