@@ -58,6 +58,10 @@ def tutorial(request):
     return render(request, 'tutorial.html')
 
 
+def timer(request):
+    return render(request, 'timer.html')
+
+
 def index2(request,name,student_number):
     return render(request, "index2.html",{"name":name})
 

@@ -47,5 +47,6 @@ urlpatterns = [
     url(r'^modify_action/$', modify.modify_action),
     url(r'^record/$', views.record),
     url(r'^tutorial/$', views.tutorial),
+    url(r'^timer/$', views.timer),
 
 ]

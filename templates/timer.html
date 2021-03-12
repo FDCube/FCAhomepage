@@ -4,17 +4,27 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
-        .div-timer{
-            width: 100%;
-            background-color: rgb(0, 200, 100);
-            padding: 100px 0px;
-        }
         .timer{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            background-color: rgb(200, 255, 255);
+        }
+        .timer-time{
             color: rgb(0, 0, 0);
             font-family: "arial";
-            font-size: 100pt;
+            font-size: 150pt;
             font-weight: bold;
             text-align: center;
+        }
+        .div-score-table{
+            position: fixed;
+            left: 10px;
+            bottom: 10px;
+            border: 5px solid rgb(100, 230, 230);
         }
         .score-table{
             font-family: "arial";
@@ -32,11 +42,14 @@
         }
     </style>
 </head>
-<body>
-    <div id="div-timer" class="div-timer" align="center">
-        <span id="timer" class="timer">--.--</span>
+<body style="margin:0;">
+    <div id="timer" class="timer" align="center">
+        <span id="timer-time" class="timer-time">--.--</span>
     </div>
     <div>
+        <input type="text">
+    </div>
+    <div class="div-score-table">
         <table class="score-table">
             <thead class="table-title">
                 <tr>
@@ -68,35 +81,106 @@
     </div>
 
     <script>
-        var running = false; // 是否计时中
+        var timerEnabled = true; // 是否允许计时（比如在键盘进行其他输入操作时应该禁用）
+        var timerState = 0    // 计时状态（0-准备；1-观察中；2-计时中；3-计时完成）
+        var penaltyState = 0  // 惩罚状态
+        var keyState = 0 // 键盘状态（0-正常；1-按下）
+        var startTimePress = 0.0 // 键盘按下的时间(毫秒时间戳)
+        var startInspectTime = 0.0 // 开始观察的系统时间(毫秒时间戳)
         var countTime = 0.0; // 计时秒数
-        var startTime = 0; // 开始计时的系统时间(毫秒时间戳)
-        var timerText = document.getElementById("timer");
+        var startTime = 0.0; // 开始计时的系统时间(毫秒时间戳)
+        var timerBlock = document.getElementById("timer");
+        var timerText = document.getElementById("timer-time");
         timerText.innerHTML = toTimeString(countTime);
         document.onkeydown = onKeyDown;
+        document.onkeyup = onKeyUp;
+		timerBlock.onmousedown = onKeyDown;
+		timerBlock.onmouseup = onKeyUp;
 
         function onKeyDown(e){
-            var event = e || window.event || arguments.callee.caller.arguments[0];
-            /*var s = e.type + " " + e.keyCode;
-            alert(s);*/
-            if (!running){
-                    running = true;
-                    countTime = 0.0;
-                    startTime = new Date().getTime();
-                    runTimer = setInterval(refreshTimer, 100);
+            if (timerEnabled){
+                var event = e || window.event || arguments.callee.caller.arguments[0];
+                /*var s = e.type + " " + e.keyCode;
+                alert(s);*/
+                if (timerState == 1){ // 观察时按下（准备开始）
+					if (keyState == 0){
+						console.log("观察时按下（准备开始）");
+						startTimePress = new Date().getTime();
+						changeTimerColor("red");
+					}
+					else{	// 处于按下状态
+						console.log("处于按下状态");
+						if (new Date().getTime() - startTimePress > 500) {
+							changeTimerColor("green");
+						}
+					}
                 }
-            else{
-                    running = false;
+                else if (timerState == 2){ // 计时时按下（结束）
+					console.log("计时时按下（结束）");
+                    timerState = 3;
                     clearInterval(runTimer);
                     var endTime = new Date().getTime() - startTime;
                     countTime = endTime / 1000;
                     timerText.innerHTML = toTimeString(countTime);
+                    // document.exitFullscreen();
                 }
+                else if (timerState == 3){ // 完成时按下（复位）
+					console.log("完成时按下（复位）");
+                    timerState = 0;
+                }
+                keyState = 1;
+            }
+        }
+        function onKeyUp(e){
+            if (timerEnabled){
+                var event = e || window.event || arguments.callee.caller.arguments[0];
+                if (timerState == 0){ // 准备时放手（开始观察）
+					console.log("准备时放手（开始观察）");
+                    timerState = 1
+                    // timerBlock.requestFullscreen();
+                    countTime = 15;
+                    startInspectTime = new Date().getTime();
+                    runInspect = setInterval(refreshInspecting, 20);
+                }
+                else if (timerState == 1){ // 观察时放手（开始计时）
+					console.log("观察时放手");
+                    changeTimerColor("black");
+                    if (new Date().getTime() - startTimePress > 500){
+						console.log("结束观察（开始计时）");
+                        clearInterval(runInspect); // 结束观察
+                        timerState = 2
+                        countTime = 0.0;
+                        startTime = new Date().getTime();
+                        runTimer = setInterval(refreshTiming, 20);
+                    }
+                }
+                keyState = 0;
+            }
         }
 
-        function refreshTimer(){
-            countTime += 0.1;
+        function refreshInspecting(){
+            countTime -= 0.02;
+            if (countTime >= 0){
+                penaltyState = 0;
+                timerText.innerHTML = Math.ceil(countTime);
+            }
+            else if (countTime >= -2) {
+                penaltyState = 1;
+                timerText.innerHTML = "+2";
+            }
+            else{
+                penaltyState = 2;
+                timerText.innerHTML = "DNF";
+            }
+        }
+
+        function refreshTiming(){
+            countTime += 0.02;
             timerText.innerHTML = toTimeString(countTime);
+        }
+
+        function changeTimerColor(color){
+            timerText.style.color = color;
         }
 
         function toTimeString(t){
