@@ -45,7 +45,8 @@ import bs4
 from typing import Optional, List, Dict
 
 url_cubing_china = "http://cubingchina.com"
-RE_name = re.compile(r"([\w\n ]+) \((.+)\)")
+RE_name = re.compile(r"([\w\n ]+) ?\(?(.+)?\)?")
+RE_forbid_char = re.compile(r"""[!@#$%^&*()+=`{}|:;"'?/,\[\]\\]""")
 
 
 class Competitor:
@@ -115,9 +116,11 @@ def get_competitor_by_wca_id(wca_id: str) -> Optional[Competitor]:
     if h1_name:
         res = RE_name.match(h1_name.text)
         if res:
-            competitor = Competitor(res.group(2), res.group(1))
+            name = res.group(1) if res.group(2) is None else res.group(2)
+            name_en = res.group(1)
+            competitor = Competitor(name, name_en)
         else:
-            print("姓名解析错误")
+            print("姓名解析错误 ()".format(h1_name.text))
             return None
     else:
         print("选手不存在")
@@ -150,5 +153,26 @@ def get_competitor_by_wca_id(wca_id: str) -> Optional[Competitor]:
     print(competitor)
 
 
+def get_wca_id_by_name(name: str) -> Optional[List[str]]:
+    if RE_forbid_char.search(name):
+        print("包含非法字符")
+        return None
+    searching_url = "?region=World&gender=all&name={}".format(name)
+    url = url_cubing_china + "/results/person" + searching_url
+    print(url)
+    str_html = get_html_by_url(url)
+
+    soup = bs4.BeautifulSoup(str_html, "html.parser")
+
+    div_summary = soup.find("div", attrs={"class": "summary"})
+    print(div_summary.text)
+    table_people = soup.find("table")
+    tr_event = table_people.find_all("tr")
+    for tr in tr_event[1:]:
+        td_s = tr.find_all("td")
+        print(td_s[1].text, td_s[2].text, td_s[3].text, td_s[4].text)
+
+
 if __name__ == '__main__':
-    get_competitor_by_wca_id("2018DONG13")
+    # get_competitor_by_wca_id("2018JIAN42")
+    get_wca_id_by_name("董")
