@@ -41,6 +41,7 @@ def logout(request):
     request.session.flush()
     return redirect('/')
 
+
 def record(request):
     events1=[]
     events = Record.objects.all()

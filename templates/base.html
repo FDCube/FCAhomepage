@@ -11,40 +11,75 @@
             }
         }
 
-
-
-
     </script>
     <style>
+        .user{
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0;
+        }
         .top{
             width: 100%;
             background: rgb(240, 240, 255);
-            padding: 0;
+            clear: both;
         }
-        .top ul{
-            width: auto;
+        .top-ul{
             list-style-type: none;
             padding: 0;
         }
-        .top li{
+        .user top-ul:last-child{
+            margin-right: 5%;
+        }
+        .top top-ul:first-child{
+            margin-left: 5%;
+        }
+        .top-ul li{
             display: inline-block;
             margin-right: 5px;
-            background: rgb(240, 240, 255);
-            border: 1px solid rgb(240, 240, 255);
         }
-        .top li a{
+        .user-btn{
+            color: rgb(0, 0, 200);
+            background: rgba(220, 255, 255, 100);
+            border: 2px solid rgba(180, 255, 255, 255);
             display: block;
             font-family: "楷体";
             font-size: 20px;
             font-weight: bold;
             text-align: center;
-            color: blue;
             text-decoration: none;
-            padding: 10px 30px;
+            padding: 5px 15px;
         }
-        .top li:hover{
-            background: rgb(200, 240, 255);
-            border-color: blue;
+        .user-btn:hover{
+            background: rgba(200, 240, 255, 100);
+            border-color: rgba(0, 0, 255, 150);
+        }
+        .username {
+            font-family: "黑体";
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .top-btn{
+            color: blue;
+            background: transparent;
+            border: 1px solid transparent;
+            display: block;
+            font-family: "楷体";
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            padding: 10px 20px;
+        }
+        .top-btn:hover{
+            background: rgba(200, 240, 255, 100);
+            border-color: rgba(0, 0, 255, 200);
+        }
+        /*主体*/
+        .content{
+            clear: both;
         }
 
     </style>
@@ -53,28 +88,32 @@
 <body>
 
 <div class="header" align="center">
-    <h1>复旦魔方FCA</h1>
+    <h1><img src="/static/image/logo_1.jpg" alt="" height="50" width="50"/>复旦魔方FCA</h1>
 </div>
 
-<div class="top">
-    <ul>
-        <li><a href="/index.html">首页</a></li>
-        <li><a href="/general.html">社团概况</a></li>
-        <li><a href="/record">校记录</a></li>
-        <li><a href="/tutorial">教程</a></li>
-        <li><a href="/timer">计时器</a></li>
+<div class="user">
+    <ul class="top-ul">
         {% if request.session.student_number %}
         <li>
-            <span>{{ request.session.name }}</span>
+            <span class="username">{{ request.session.name }}</span>
         </li>
         <li>
-            <a href="javascript:linkok('/logout','确认注销？')">注销</a>
+            <a class="user-btn" href="javascript:linkok('/logout','确认注销？')">注销</a>
         </li>
-        <li><a href="/modify">修改个人信息</a></li>
+        <li><a class="user-btn" href="/modify">修改个人信息</a></li>
         {% else %}
-        <li><a href="/login/">登录</a></li>
-        <li><a href="/register_form/">注册</a></li>
+        <li><a class="user-btn" href="/login/">登录</a></li>
+        <li><a class="user-btn" href="/register_form/">注册</a></li>
         {% endif %}
+    </ul>
+</div>
+<div class="top">
+    <ul class="top-ul">
+        <li><a class="top-btn" href="/index.html">首页</a></li>
+        <li><a class="top-btn" href="/general.html">社团概况</a></li>
+        <li><a class="top-btn" href="/record">校记录</a></li>
+        <li><a class="top-btn" href="/tutorial">教程</a></li>
+        <li><a class="top-btn" href="/timer">计时器</a></li>
     </ul>
 </div>
 
