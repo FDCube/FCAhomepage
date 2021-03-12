@@ -27,7 +27,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
 
-from . import views,testdb,register,login
+from . import views,testdb,register,login,modify
 
 urlpatterns = [
     url(r'^$', views.index),
@@ -42,6 +42,9 @@ urlpatterns = [
     url(r'^register_form/$', register.register_form),
     url(r'^register/$', register.register),
     url(r'^login_action/$', login.login_action),
-    path('index2/<name>/<student_number>',views.index2,name='index2'),
     url(r'^logout/$', views.logout),
+    url(r'^modify/$', modify.modify),
+    url(r'^modify_action/$', modify.modify_action),
+    url(r'^record/$', views.record),
+
 ]

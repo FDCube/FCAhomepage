@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>校记录</title>
+</head>
+<body>
+<table width = '400' border="1" align="center">
+    <thead>
+    <tr>
+        <th align="center">项目</th>
+        <th align="center">姓名</th>
+        <th align="center">单次</th>
+        <th align="center">平均</th>
+    </tr>
+    </thead>
+    <tbody>
+    {%  for event in events %}
+    <tr>
+        {% if event.name_single %}
+        <td align="center">{{ event.cubeevent}}</td>
+        <td align="center">{{ event.name_single}}</td>
+        <td align="center">{{ event.time_single}}</td>
+        <td>&nbsp;</td>
+        {% endif %}
+    </tr>
+    <tr>
+        {% if event.name_average %}
+        <td align="center">{{ event.cubeevent}}</td>
+        <td align="center">{{ event.name_average}}</td>
+        <td>&nbsp;</td>
+        <td align="center">{{ event.time_average}}</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+
+
+
+</table>
+</body>
+</html>

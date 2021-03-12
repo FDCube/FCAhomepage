@@ -5,7 +5,6 @@
 #   * Make sure each ForeignKey and OneToOneField has `on_delete` set to the desired behavior
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
-# 这是自动生成的，有用的只有4个表
 from django.db import models
 
 
@@ -165,7 +164,20 @@ class Person(models.Model):
     college = models.CharField(max_length=20, blank=True, null=True)
     major = models.CharField(max_length=30, blank=True, null=True)
     passwd = models.CharField(max_length=20)
+    wcaid = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'person'
+
+
+class Record(models.Model):
+    cubeevent = models.CharField(db_column='CubeEvent', primary_key=True, max_length=20)  # Field name made lowercase.
+    name_single = models.CharField(max_length=20, blank=True, null=True)
+    time_single = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    name_average = models.CharField(max_length=20, blank=True, null=True)
+    time_average = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'record'

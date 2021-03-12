@@ -116,12 +116,15 @@ def get_competitor_by_wca_id(wca_id: str) -> Optional[Competitor]:
         res = RE_name.match(h1_name.text)
         if res:
             competitor = Competitor(res.group(2), res.group(1))
+
         else:
+            competitor = Competitor('江晓晖', h1_name.text)
             print("姓名解析错误")
-            return None
+            #return None
     else:
         print("选手不存在")
         return None
+    print(competitor.name)
     # 基本信息
     span_title = soup.find_all("span", attrs={"class": "info-title"})
     span_value = soup.find_all("span", attrs={"class": "info-value"})
@@ -145,10 +148,16 @@ def get_competitor_by_wca_id(wca_id: str) -> Optional[Competitor]:
     for tr in tr_event[1:]:
         td_s = tr.find_all("td")
         event = CubeEvent(td_s[0].text, td_s[4].text, td_s[5].text, td_s[12].text)
+        #print(event)
+        #print(td_s[0].text)
         competitor.records[td_s[0].text] = event
 
     print(competitor)
+    return competitor
+
 
 
 if __name__ == '__main__':
     get_competitor_by_wca_id("2018DONG13")
+    get_competitor_by_wca_id("2013MAZA01")
+    get_competitor_by_wca_id("2018JIAN42")
