@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>复旦魔方FCA</title>
+    <script language="JavaScript">
+        function linkok(url,string){
+            question = confirm(string);
+            if (question){
+                window.location.href = url;
+            }
+        }
+
+
+
+
+    </script>
+    <style>
+        .top{
+            width: 100%;
+            background: rgb(240, 240, 255);
+            padding: 0;
+        }
+        .top ul{
+            width: auto;
+            list-style-type: none;
+            padding: 0;
+        }
+        .top li{
+            display: inline-block;
+            margin-right: 5px;
+            background: rgb(240, 240, 255);
+            border: 1px solid rgb(240, 240, 255);
+        }
+        .top li a{
+            display: block;
+            font-family: "楷体";
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            color: blue;
+            text-decoration: none;
+            padding: 10px 30px;
+        }
+        .top li:hover{
+            background: rgb(200, 240, 255);
+            border-color: blue;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="header" align="center">
+    <h1>复旦魔方FCA</h1>
+</div>
+
+<div class="top">
+    <ul>
+        <li><a href="/index.html">首页</a></li>
+        <li><a href="/general.html">社团概况</a></li>
+        <li><a href="/record">校记录</a></li>
+        <li><a href="/tutorial">教程</a></li>
+        {% if request.session.student_number %}
+        <li>
+            <span>{{ request.session.name }}</span>
+            <a href="javascript:linkok('/logout','确认注销？')">注销</a>
+        </li>
+        <li><a href="/modify">修改个人信息</a></li>
+        {% else %}
+        <li><a href="/login/">登录</a></li>
+        <li><a href="/register_form/">注册</a></li>
+        {% endif %}
+    </ul>
+</div>
+
+<div class="content">
+    <br>
+    {% block content %}
+    {% endblock %}
+    <br>
+</div>
+
+<div class="footer" align="center">
+    <p>复旦魔方 FCA</p>
+</div>
+
+</body>
+</html>
+

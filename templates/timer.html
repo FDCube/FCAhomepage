@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .div-timer{
+            width: 100%;
+            background-color: rgb(0, 200, 100);
+            padding: 100px 0px;
+        }
+        .timer{
+            color: rgb(0, 0, 0);
+            font-family: "arial";
+            font-size: 100pt;
+            font-weight: bold;
+            text-align: center;
+        }
+        .score-table{
+            font-family: "arial";
+            font-size: 20pt;
+            text-align: center;
+        }
+        .table-title{
+            background-color: rgb(0, 100, 240);
+        }
+        .table-odd{
+            background-color: rgb(200, 240, 255);
+        }
+        .table-even{
+            background-color: rgb(230, 255, 255);
+        }
+    </style>
+</head>
+<body>
+    <div id="div-timer" class="div-timer" align="center">
+        <span id="timer" class="timer">--.--</span>
+    </div>
+    <div>
+        <table class="score-table">
+            <thead class="table-title">
+                <tr>
+                    <th style="padding: 0px 10px;">序号</th>
+                    <th style="padding: 0px 30px;">成绩</th>
+                </tr>
+            </thead>
+            <tr class="table-even">
+                <th>1</th>
+                <th> </th>
+            </tr>
+            <tr class="table-odd">
+                <th>2</th>
+                <th> </th>
+            </tr>
+            <tr class="table-even">
+                <th>3</th>
+                <th> </th>
+            </tr>
+            <tr class="table-odd">
+                <th>4</th>
+                <th> </th>
+            </tr>
+            <tr class="table-even">
+                <th>5</th>
+                <th> </th>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        var running = false; // 是否计时中
+        var countTime = 0.0; // 计时秒数
+        var startTime = 0; // 开始计时的系统时间(毫秒时间戳)
+        var timerText = document.getElementById("timer");
+        timerText.innerHTML = toTimeString(countTime);
+        document.onkeydown = onKeyDown;
+
+        function onKeyDown(e){
+            var event = e || window.event || arguments.callee.caller.arguments[0];
+            /*var s = e.type + " " + e.keyCode;
+            alert(s);*/
+            if (!running){
+                    running = true;
+                    countTime = 0.0;
+                    startTime = new Date().getTime();
+                    runTimer = setInterval(refreshTimer, 100);
+                }
+            else{
+                    running = false;
+                    clearInterval(runTimer);
+                    var endTime = new Date().getTime() - startTime;
+                    countTime = endTime / 1000;
+                    timerText.innerHTML = toTimeString(countTime);
+                }
+        }
+
+        function refreshTimer(){
+            countTime += 0.1;
+            timerText.innerHTML = toTimeString(countTime);
+        }
+
+        function toTimeString(t){
+            sec = t % 60;
+            t = Math.floor(t / 60);
+            min = t % 60;
+            h = Math.floor(t / 60);
+            if (min == 0)
+                {return String(sec.toFixed(2));}
+            else
+                {return String(min) + ":" + String(sec.toFixed(2));}
+        }
+
+    </script>
+</body>
+</html>

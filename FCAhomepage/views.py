@@ -53,6 +53,11 @@ def record(request):
                 events1.append(event)
     return render(request, 'record.html',{'events':events1})
 
+
+def tutorial(request):
+    return render(request, 'tutorial.html')
+
+
 def index2(request,name,student_number):
     return render(request, "index2.html",{"name":name})
 
