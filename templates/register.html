@@ -13,6 +13,7 @@
     姓名: <input type="text" id = "name" name="name"> <span style= "color:red;" id = 'check2'>*</span> <br><br>
     院系：<input type="text" id = 'college' name="college"><br><br>
     专业：<input type="text" id = 'major' name="major"><br><br>
+    WCA ID：<input type="text" id = 'wca_id' name="wca_id"><br><br>
     密码：<input type="password" id = 'passwd' name="passwd"> <span style= "color:red;" id = 'check3'>*</span> <br><br>
     确认密码：<input type="password" id = 'passwd2' name="passwd2"> <br><br>
 
@@ -29,6 +30,7 @@
         var b = $("#name").val();
         var c = $("#college").val();
         var d = $("#major").val();
+        var g = $("#wca_id").val();
         var e = $("#passwd").val();
         var f = $("#passwd2").val();
         //逐一检查，然后保存
@@ -41,7 +43,7 @@
         $.get("/register/",{'e':e, 'f':f }, function(ret){
             $('#check3').html(ret);
         });
-        $.get("/register/",{'a':a,'b':b, 'c':c, 'd':d ,'e':e, 'f':f}, function(ret){
+        $.get("/register/",{'a':a,'b':b, 'c':c, 'd':d ,'e':e, 'f':f,'g':g}, function(ret){
             if (ret == 'success'){
                 con=confirm("注册成功！");
                 if (con == true)window.location.href="/index.html";

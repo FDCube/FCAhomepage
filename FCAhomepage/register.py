@@ -17,6 +17,7 @@ def register(request):
     major = request.GET.get('d')
     passwd1 = request.GET.get('e')
     passwd2 = request.GET.get('f')
+    wca_id = request.GET.get('g')
 
     '''
     if 'student_number' in request.GET and request.GET['student_number']:
@@ -30,12 +31,10 @@ def register(request):
         is_repeat = 1
 
     if student_number != None and name != None and passwd1 != None and student_number != '' and name != '' and passwd1 != '' and passwd1 == passwd2 and is_repeat == 0:  # 如果满足所有条件，将注册信息写入数据库
-        if college == '' and major == '':  # 设为None才能插入NULL，不然插入的是空字符串
-            line_register = Person(studentnumber=student_number, name=name, passwd=passwd1,major = None, college = None)
-        elif college == '':
-            line_register = Person(studentnumber=student_number, name=name, passwd=passwd1, major=major,college = None)
-        else:
-            line_register = Person(studentnumber=student_number, name=name, passwd=passwd1, major=major, college=college)
+        for i in [college,major,wca_id]:
+            if i == '':
+                i = None
+        line_register = Person(studentnumber=student_number, name=name, passwd=passwd1, major=major, college=college, wcaid=wca_id)
         line_register.save()
         return HttpResponse("success")
     else:  # 不满足条件

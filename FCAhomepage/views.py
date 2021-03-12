@@ -1,7 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from database.models import Record
+from FCAhomepage.core.utils import minute_to_sec,sec_to_minute
 import re
-
+EventList = ['三阶','二阶','四阶','五阶','六阶', '七阶','单手','三盲','四盲','金字塔','斜转','SQ1','魔表','最少步']
 
 html_hello = """
 <h5>hello world!</h>
@@ -33,10 +35,23 @@ def login(request):
     """登录页面"""
     return render(request, "login.html")
 
+
 def logout(request):
     """注销"""
     request.session.flush()
     return redirect('/')
+
+def record(request):
+    events1=[]
+    events = Record.objects.all()
+    events = list(events)
+    for i in EventList:
+        for event in events:
+            if event.cubeevent == i:
+                event.time_average = sec_to_minute(event.time_average)
+                event.time_single = sec_to_minute(event.time_single)
+                events1.append(event)
+    return render(request, 'record.html',{'events':events1})
 
 def index2(request,name,student_number):
     return render(request, "index2.html",{"name":name})

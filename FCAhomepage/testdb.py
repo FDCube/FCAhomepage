@@ -10,20 +10,13 @@ def testdb(request):
     # 初始化
     response = ""
     response1 = ""
-    '''
-    list = Person.objects.all()
-    line = Person.objects.filter(passwd=123456)
+
+    line = Person.objects.filter(studentnumber=18307110137)
     for var in line:
-        student_no = var.studentnumber
-    line2 = CompetitionTime.objects.filter(studentnumber=student_no)
+        college = var.college  # 查询得到学院和专业
+        major = var.major
+    return HttpResponse(college)
 
-
-    # 输出所有数据
-    for var in line2:
-        response1 += str(var.single_time) + " "
-    response = response1
-    return HttpResponse("<p>" + response + "</p>")
-    '''
     line = Person.objects.filter(studentnumber=18307110137)
     line_change = Person.objects.get(studentnumber=18307110137)
     line_change.passwd = 12345

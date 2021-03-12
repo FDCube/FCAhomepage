@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计时器</title>
+    <script>
+         var date,endDate
+         var starttime,now,leftTime;
+         var m, s, ms;
+         var int;
+        function Reset()//重置
+        {
+          window.clearInterval(int);
+          m=s=ms=0;
+          //document.getElementById('timetext').innerHTML='00:00:000';
+        }
+        function start()//开始
+        {
+            date = new Date();
+            starttime = date.getTime();
+            int=setInterval(timer,5);
+        }
+        function timer()//计时
+        {
+            endDate = new Date();//设置截止时间
+            now = endDate.getTime();
+            leftTime = now - starttime; //时间差
+            if(leftTime >= 0) {
+                m = Math.floor(leftTime / 1000 / 60 % 60);
+                s = Math.floor(leftTime / 1000 % 60);
+                ms = Math.floor(leftTime % 1000);
+                if (ms < 100) {
+                    ms = "0" + ms;
+                }
+                if (s < 10) {
+                    s = "0" + s;
+                }
+                if (m < 10) {
+                    m = "0" + m;
+                }
+                //将倒计时赋值到div中
+                document.getElementById('timetext').innerHTML = m + ":" + s + ":" + ms;
+            }
+        }
+
+    </script>
+</head>
+<body>
+
+<div>
+    <span id="timetext">00:00:000</span><br>
+    <button type="button" onclick="start()">开始</button>
+    <button type = "button" onclick="Reset()">停止</button>
+
+</div>
+
+</body>
+</html>
