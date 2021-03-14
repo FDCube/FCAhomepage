@@ -59,23 +59,23 @@
             </thead>
             <tr class="table-even">
                 <th>1</th>
-                <th> </th>
+                <th id="time1"> </th>
             </tr>
             <tr class="table-odd">
                 <th>2</th>
-                <th> </th>
+                <th id="time2"> </th>
             </tr>
             <tr class="table-even">
                 <th>3</th>
-                <th> </th>
+                <th id="time3"> </th>
             </tr>
             <tr class="table-odd">
                 <th>4</th>
-                <th> </th>
+                <th id="time4"> </th>
             </tr>
             <tr class="table-even">
                 <th>5</th>
-                <th> </th>
+                <th id="time5"> </th>
             </tr>
         </table>
     </div>
@@ -93,6 +93,14 @@
         var startTime = 0.0; // 开始计时的系统时间(毫秒时间戳)
         var timerBlock = document.getElementById("timer");
         var timerText = document.getElementById("timer-time");
+        var timeText1 = document.getElementById("time1");
+        var timeText2 = document.getElementById("time2");
+        var timeText3 = document.getElementById("time3");
+        var timeText4 = document.getElementById("time4");
+        var timeText5 = document.getElementById("time5");
+        var timeString = [];  // 时间数组
+        var penaltyString = []; // +2状态数组
+        var timeStr  = JSON.stringify(timeString);  // 将数组转换为字符串 可能用不上
         timerText.innerHTML = toTimeString(countTime);
         document.onkeydown = onKeyDown;
         document.onkeyup = onKeyUp;
@@ -116,6 +124,28 @@
 			        var endTime = new Date().getTime() - startTime;
 			        countTime = endTime / 1000;
 			        timerText.innerHTML = toTimeString(countTime);
+			        timeString.unshift(countTime);  // 在数组最前面增加最新成绩
+                    if (penaltyState ==1) {
+                        timeString[0] += 2;
+                        penaltyString.unshift('+');  // 在另一个数组的对应位置插入+号
+                    }
+                    else penaltyString.unshift('');  // 不+2就插入空字符串
+                    if (penaltyState ==2) timeString[0] = 'DNF';
+                    //timeStr = JSON.stringify(timeString);  //
+                    if(timeString.length <= 5){
+                        if (timeString[timeString.length-1])timeText1.innerHTML = toTimeString(timeString[timeString.length-1])+penaltyString[timeString.length-1];
+                        if (timeString[timeString.length-2])timeText2.innerHTML = toTimeString(timeString[timeString.length-2])+penaltyString[timeString.length-2];
+                        if (timeString[timeString.length-3])timeText3.innerHTML = toTimeString(timeString[timeString.length-3])+penaltyString[timeString.length-3];
+                        if (timeString[timeString.length-4])timeText4.innerHTML = toTimeString(timeString[timeString.length-4])+penaltyString[timeString.length-4];
+                        if (timeString[timeString.length-5])timeText5.innerHTML = toTimeString(timeString[timeString.length-5])+penaltyString[timeString.length-5];
+                    }
+                    else{
+                        timeText1.innerHTML = toTimeString(timeString[4])+penaltyString[4];
+                        timeText2.innerHTML = toTimeString(timeString[3])+penaltyString[3];
+                        timeText3.innerHTML = toTimeString(timeString[2])+penaltyString[2];
+                        timeText4.innerHTML = toTimeString(timeString[1])+penaltyString[1];
+                        timeText5.innerHTML = toTimeString(timeString[0])+penaltyString[0];
+                    }
 			        // document.exitFullscreen();
 			    }
 			    else if (timerState == 3){ // 完成时按下（复位）
@@ -203,6 +233,7 @@
         }
 
         function toTimeString(t){
+		    if(t == 'DNF') return t;
             sec = t % 60;
             t = Math.floor(t / 60);
             min = t % 60;
