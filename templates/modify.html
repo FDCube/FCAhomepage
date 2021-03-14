@@ -6,7 +6,7 @@
 </head>
 <body>
     <p>学号：{{ request.session.student_number }}</p><br>
-    <form action="/modify_action/"  method="get">
+    <form action="/modify_action/"  method="post">
         姓名: <input type="text" id = "name" name="name" value={{ request.session.name }}> <span style= "color:red;" id = 'check1' name="check1">{{ check1 }}</span> <br><br>
         院系：<input type="text" id = 'college' name="college" value={{ college }}><br><br>
         专业：<input type="text" id = 'major' name="major" value={{ major }}><br><br>
@@ -16,13 +16,16 @@
 
 <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
 <script>
+    $.ajaxSetup({
+            data:{csrfmiddlewaretoken:'{{ csrf_token }}'}
+        })
     $(document).ready(function(){
       $("#submit").click(function(){
           var name = $("#name").val();
           var college = $("#college").val();
           var major = $("#major").val();
           var wca_id = $("#wca_id").val();
-        $.get("/modify_action/",{'name':name,'college':college,'major':major,'wca_id':wca_id}, function(ret){
+        $.post("/modify_action/",{'name':name,'college':college,'major':major,'wca_id':wca_id}, function(ret){
             if (ret == 'empty'){
                 $('#check1').html('姓名不能为空！')
             }

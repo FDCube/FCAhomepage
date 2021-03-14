@@ -22,14 +22,14 @@ def modify_action(request):
     for var in line:
         college = var.college  # 查询得到学院和专业
         major = var.major
-    name = request.GET.get('name')
-    college = request.GET.get('college')
-    major = request.GET.get('major')
-    wca_id = request.GET.get('wca_id')
+    name = request.POST.get('name')
+    college = request.POST.get('college')
+    major = request.POST.get('major')
+    wca_id = request.POST.get('wca_id')
     if name == '':  # 姓名为空
         return HttpResponse('empty')
-    for i in [college, major, wca_id]:
-        if i == '':
-            i = None
+    if college == '' or college == 'None':college = None
+    if major == '' or major == 'None': major = None
+    if wca_id == '' or wca_id == 'None': wca_id = None
     line.update(name=name, major=major, college=college, wcaid=wca_id)
     return HttpResponse("success")
