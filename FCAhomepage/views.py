@@ -59,6 +59,12 @@ def tutorial(request):
     return render(request, 'tutorial.html')
 
 
+def competition(request):
+    competitions = []
+
+    return render(request, 'competition.html', {'competitions': competitions})
+
+
 def timer(request):
     return render(request, 'timer.html')
 

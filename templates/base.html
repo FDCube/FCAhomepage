@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    {% block title %}
     <title>复旦魔方FCA</title>
+    {% endblock %}
     <script language="JavaScript">
         function linkok(url,string){
             question = confirm(string);
@@ -12,6 +14,10 @@
         }
 
     </script>
+    {% block head_script %}
+    {% endblock %}
+    {% block style %}
+    {% endblock %}
     <style>
         .user{
             width: 100%;
@@ -113,6 +119,7 @@
         <li><a class="top-btn" href="/general.html">社团概况</a></li>
         <li><a class="top-btn" href="/record">校记录</a></li>
         <li><a class="top-btn" href="/tutorial">教程</a></li>
+        <li><a class="top-btn" href="/competition">线上赛</a></li>
         <li><a class="top-btn" href="/timer">计时器</a></li>
     </ul>
 </div>
@@ -124,9 +131,12 @@
     <br>
 </div>
 
-<div class="footer" align="center">
+<footer class="footer" style="text-align: center;">
     <p>复旦魔方 FCA</p>
-</div>
+</footer>
+
+{% block foot_script %}
+{% endblock %}
 
 </body>
 </html>
