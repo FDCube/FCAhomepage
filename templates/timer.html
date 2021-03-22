@@ -1,249 +1,270 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>计时器</title>
-    <style>
-        .timer{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            height: 100%;
-            position: fixed;
-            background-color: rgb(200, 255, 255);
-        }
-        .timer-time{
-            color: rgb(0, 0, 0);
-            font-family: "arial";
-            font-size: 150pt;
-            font-weight: bold;
-            text-align: center;
-        }
-        .div-score-table{
-            position: fixed;
-            left: 10px;
-            bottom: 10px;
-            border: 5px solid rgb(100, 230, 230);
-        }
-        .score-table{
-            font-family: "arial";
-            font-size: 20pt;
-            text-align: center;
-        }
-        .table-title{
-            background-color: rgb(0, 100, 240);
-        }
-        .table-odd{
-            background-color: rgb(200, 240, 255);
-        }
-        .table-even{
-            background-color: rgb(230, 255, 255);
-        }
-    </style>
-</head>
-<body style="margin:0;">
-    <div id="timer" class="timer" align="center">
-        <span id="timer-time" class="timer-time">--.--</span>
-    </div>
-    <div>
-        <input type="text">
-    </div>
-    <div class="div-score-table">
-        <table class="score-table">
-            <thead class="table-title">
-                <tr>
-                    <th style="padding: 0px 10px;">序号</th>
-                    <th style="padding: 0px 30px;">成绩</th>
-                </tr>
-            </thead>
-            <tr class="table-even">
-                <th>1</th>
-                <th id="time1"> </th>
-            </tr>
-            <tr class="table-odd">
-                <th>2</th>
-                <th id="time2"> </th>
-            </tr>
-            <tr class="table-even">
-                <th>3</th>
-                <th id="time3"> </th>
-            </tr>
-            <tr class="table-odd">
-                <th>4</th>
-                <th id="time4"> </th>
-            </tr>
-            <tr class="table-even">
-                <th>5</th>
-                <th id="time5"> </th>
-            </tr>
-        </table>
-    </div>
+{% extends "base.html" %}
 
-    <script>
-        var timerEnabled = true; // 是否允许计时（比如在键盘进行其他输入操作时应该禁用）
-        var timerState = 0;    // 计时状态（0-准备；1-观察中；2-计时中；3-计时完成）
-        var penaltyState = 0;  // 惩罚状态
-        var keyState = 0; // 键盘状态（0-正常；1-按下）
-        var startTimePress = 0.0; // 键盘按下的时间(毫秒时间戳)
-		var readyTimeout;  // 观察时按下后一定时间才可以开始的timeout事件
-		var isReady = false;  // 观察时按下后是否可以开始计时的flag
-        var startInspectTime = 0.0; // 开始观察的系统时间(毫秒时间戳)
-        var countTime = 0.0; // 计时秒数
-        var startTime = 0.0; // 开始计时的系统时间(毫秒时间戳)
-        var timerBlock = document.getElementById("timer");
-        var timerText = document.getElementById("timer-time");
-        var timeText1 = document.getElementById("time1");
-        var timeText2 = document.getElementById("time2");
-        var timeText3 = document.getElementById("time3");
-        var timeText4 = document.getElementById("time4");
-        var timeText5 = document.getElementById("time5");
-        var timeString = [];  // 时间数组
-        var penaltyString = []; // +2状态数组
-        var timeStr  = JSON.stringify(timeString);  // 将数组转换为字符串 可能用不上
-        timerText.innerHTML = toTimeString(countTime);
-        document.onkeydown = onKeyDown;
-        document.onkeyup = onKeyUp;
-		timerBlock.ontouchstart = ontouchStart;
-		timerBlock.ontouchend = ontouchEnd;
-		
-		function press(){
-			if (timerEnabled){
-			    if (timerState == 1){ // 观察时按下（准备开始）
-					if (keyState == 0){  // 只处理第一次的按下事件
-						console.log("观察时按下（准备开始）");
-						startTimePress = new Date().getTime();
-						changeTimerColor("red");
-						readyTimeout = setTimeout(setReady, 500);
-					}
-			    }
-			    else if (timerState == 2){ // 计时时按下（结束）
-					console.log("计时时按下（结束）");
-			        timerState = 3;
-			        clearInterval(runTimer);
-			        var endTime = new Date().getTime() - startTime;
-			        countTime = endTime / 1000;
-			        timerText.innerHTML = toTimeString(countTime);
-			        timeString.unshift(countTime);  // 在数组最前面增加最新成绩
-                    if (penaltyState ==1) {
-                        timeString[0] += 2;
-                        penaltyString.unshift('+');  // 在另一个数组的对应位置插入+号
-                    }
-                    else penaltyString.unshift('');  // 不+2就插入空字符串
-                    if (penaltyState ==2) timeString[0] = 'DNF';
-                    //timeStr = JSON.stringify(timeString);  //
-                    if(timeString.length <= 5){
-                        if (timeString[timeString.length-1])timeText1.innerHTML = toTimeString(timeString[timeString.length-1])+penaltyString[timeString.length-1];
-                        if (timeString[timeString.length-2])timeText2.innerHTML = toTimeString(timeString[timeString.length-2])+penaltyString[timeString.length-2];
-                        if (timeString[timeString.length-3])timeText3.innerHTML = toTimeString(timeString[timeString.length-3])+penaltyString[timeString.length-3];
-                        if (timeString[timeString.length-4])timeText4.innerHTML = toTimeString(timeString[timeString.length-4])+penaltyString[timeString.length-4];
-                        if (timeString[timeString.length-5])timeText5.innerHTML = toTimeString(timeString[timeString.length-5])+penaltyString[timeString.length-5];
-                    }
-                    else{
-                        timeText1.innerHTML = toTimeString(timeString[4])+penaltyString[4];
-                        timeText2.innerHTML = toTimeString(timeString[3])+penaltyString[3];
-                        timeText3.innerHTML = toTimeString(timeString[2])+penaltyString[2];
-                        timeText4.innerHTML = toTimeString(timeString[1])+penaltyString[1];
-                        timeText5.innerHTML = toTimeString(timeString[0])+penaltyString[0];
-                    }
-			        // document.exitFullscreen();
-			    }
-			    else if (timerState == 3){ // 完成时按下（复位）
-					console.log("完成时按下（复位）");
-			        timerState = 0;
-			    }
-			    keyState = 1;
-			}
-		}
-		
-		function release(){
-			if (timerEnabled){
-				if (timerState == 0){ // 准备时放手（开始观察）
-					console.log("准备时放手（开始观察）");
-					timerState = 1
-					// timerBlock.requestFullscreen();
-					countTime = 15;
-					startInspectTime = new Date().getTime();
-					runInspect = setInterval(refreshInspecting, 20);
-				}
-				else if (timerState == 1){ // 观察时放手（开始计时）
-					console.log("观察时放手");
-					clearTimeout(readyTimeout);
-					changeTimerColor("black");
-					if (isReady){
-						console.log("结束观察（开始计时）");
-						clearInterval(runInspect); // 结束观察
-						isReady = false;
-						timerState = 2
-						countTime = 0.0;
-						startTime = new Date().getTime();
-						runTimer = setInterval(refreshTiming, 20);
-					}
-				}
-				keyState = 0;
-			}
-		}
+{% block style %}
+<style>
+    .timer{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 500px;
+        background-color: rgb(200, 255, 255);
+    }
+    .timer-time{
+        color: rgb(0, 0, 0);
+        font-family: "arial";
+        font-size: 150pt;
+        font-weight: bold;
+        text-align: center;
+    }
+    .div-score-table{
+    }
+    .score-table{
+        border: 5px solid rgb(100, 230, 230);
+        font-family: "arial";
+        font-size: 20pt;
+        text-align: center;
+    }
+    .table-title{
+        background-color: rgb(0, 100, 240);
+    }
+    .table-odd{
+        background-color: rgb(200, 240, 255);
+    }
+    .table-even{
+        background-color: rgb(230, 255, 255);
+    }
+</style>
+{% endblock %}
 
-        function onKeyDown(e){
-			var event = e || window.event || arguments.callee.caller.arguments[0];
-			if (e.keyCode == 32)
-				press();
-        }
-        function onKeyUp(e){
-			var event = e || window.event || arguments.callee.caller.arguments[0];
-			if (e.keyCode == 32)
-				release();
-        }
-        function ontouchStart(e){
-			e.preventDefault();
-			press();
-        }
-        function ontouchEnd(e){
-			release();
-        }
+{% block content %}
+<div id="timer" class="timer" align="center">
+    <span id="timer-time" class="timer-time">--.--</span>
+</div>
+<div class="div-score-table">
+    <table class="score-table">
+        <thead class="table-title">
+        <tr>
+            <th style="padding: 0px 10px;">序号</th>
+            <th style="padding: 0px 30px;">成绩</th>
+        </tr>
+        </thead>
+        <tr class="table-even">
+            <th>1</th>
+            <th id="time1"> </th>
+        </tr>
+        <tr class="table-odd">
+            <th>2</th>
+            <th id="time2"> </th>
+        </tr>
+        <tr class="table-even">
+            <th>3</th>
+            <th id="time3"> </th>
+        </tr>
+        <tr class="table-odd">
+            <th>4</th>
+            <th id="time4"> </th>
+        </tr>
+        <tr class="table-even">
+            <th>5</th>
+            <th id="time5"> </th>
+        </tr>
+    </table>
+</div>
+{% endblock %}
 
-        function refreshInspecting(){
-            countTime -= 0.02;
-            if (countTime >= 0){
-                penaltyState = 0;
-                timerText.innerHTML = Math.ceil(countTime);
-            }
-            else if (countTime >= -2) {
-                penaltyState = 1;
-                timerText.innerHTML = "+2";
-            }
-            else{
-                penaltyState = 2;
-                timerText.innerHTML = "DNF";
-            }
-        }
 
-        function refreshTiming(){
-            countTime += 0.02;
-            timerText.innerHTML = toTimeString(countTime);
-        }
-		
-		function setReady(){
-			changeTimerColor("green");
-			isReady = true;
-		}
+{% block foot_script %}
+<script>
+    var timerEnabled = true; // 是否允许计时（比如在键盘进行其他输入操作时应该禁用）
+    var timerState = 0;    // 计时状态（0-准备；1-观察中；2-计时中；3-计时完成）
+    var penaltyState = 0;  // 惩罚状态
+    var keyState = 0; // 键盘状态（0-正常；1-按下）
+    var startTimePress = 0.0; // 键盘按下的时间(毫秒时间戳)
+    var readyTimeout;  // 观察时按下后一定时间才可以开始的timeout事件
+    var isReady = false;  // 观察时按下后是否可以开始计时的flag
+    var startInspectTime = 0.0; // 开始观察的系统时间(毫秒时间戳)
+    var countTime = 0.0; // 计时秒数
+    var startTime = 0.0; // 开始计时的系统时间(毫秒时间戳)
+    var timerBlock = document.getElementById("timer");
+    var timerText = document.getElementById("timer-time");
+    var timeText1 = document.getElementById("time1");
+    var timeText2 = document.getElementById("time2");
+    var timeText3 = document.getElementById("time3");
+    var timeText4 = document.getElementById("time4");
+    var timeText5 = document.getElementById("time5");
+    var listScore = [];  // 成绩数组
 
-        function changeTimerColor(color){
-            timerText.style.color = color;
-        }
-
-        function toTimeString(t){
-		    if(t == 'DNF') return t;
-            sec = t % 60;
-            t = Math.floor(t / 60);
+    // 成绩结构体
+    function Score(time, penalty){
+        this.time = penalty != 1 ? time : time + 2; // 时间(s)（包含+2）
+        this.penalty = penalty; // 惩罚类型
+        this.toString = function(){
+            if (this.penalty == 2) return "DNF";
+            sec = this.time % 60;
+            t = Math.floor(this.time / 60);
             min = t % 60;
             h = Math.floor(t / 60);
             if (min == 0)
-                {return String(sec.toFixed(2));}
+                str = String(sec.toFixed(2));
             else
-                {return String(min) + ":" + String(sec.toFixed(2));}
-        }
+                str = String(min) + ":" + String(sec.toFixed(2));
+            if (this.penalty == 1)
+                str = str + " +";
+            return str;
+        };
+    }
 
-    </script>
-</body>
-</html>
+    timerText.innerHTML = toTimeString(countTime);
+    document.onkeydown = onKeyDown;
+    document.onkeyup = onKeyUp;
+    timerBlock.ontouchstart = ontouchStart;
+    timerBlock.ontouchend = ontouchEnd;
+
+    function press(){
+        if (timerEnabled){
+            if (timerState == 1){ // 观察时按下（准备开始）
+                if (keyState == 0){  // 只处理第一次的按下事件
+                    startTimePress = new Date().getTime();
+                    changeTimerColor("red");
+                    readyTimeout = setTimeout(setReady, 500);
+                }
+            }
+            else if (timerState == 2){ // 计时时按下（结束）
+                timerState = 3;
+                clearInterval(runTimer);
+                timingFinished();
+                // document.exitFullscreen();
+            }
+            else if (timerState == 3){ // 完成时按下（复位）
+                timerState = 0;
+            }
+            keyState = 1;
+        }
+    }
+
+    function release(){
+        if (timerEnabled){
+            if (timerState == 0){ // 准备时放手（开始观察）
+                timerState = 1
+                changeTimerColor("blue");
+                // timerBlock.requestFullscreen();
+                countTime = 15;
+                startInspectTime = new Date().getTime();
+                runInspect = setInterval(refreshInspecting, 20);
+                timingStarted();
+            }
+            else if (timerState == 1){ // 观察时放手（开始计时）
+                clearTimeout(readyTimeout);
+                changeTimerColor("blue");
+                if (isReady){
+                    clearInterval(runInspect); // 结束观察
+                    isReady = false;
+                    changeTimerColor("black");
+                    timerState = 2
+                    countTime = 0.0;
+                    startTime = new Date().getTime();
+                    runTimer = setInterval(refreshTiming, 20);
+                }
+            }
+            keyState = 0;
+        }
+    }
+
+    function onKeyDown(e){
+        var event = e || window.event || arguments.callee.caller.arguments[0];
+        if (e.keyCode == 32)
+            press();
+    }
+    function onKeyUp(e){
+        var event = e || window.event || arguments.callee.caller.arguments[0];
+        if (e.keyCode == 32)
+            release();
+    }
+    function ontouchStart(e){
+        e.preventDefault();
+        press();
+    }
+    function ontouchEnd(e){
+        release();
+    }
+
+    function refreshInspecting(){
+        countTime -= 0.02;
+        if (countTime >= 0){
+            penaltyState = 0;
+            timerText.innerHTML = Math.ceil(countTime);
+        }
+        else if (countTime >= -2) {
+            penaltyState = 1;
+            timerText.innerHTML = "+2";
+        }
+        else{
+            penaltyState = 2;
+            timerText.innerHTML = "DNF";
+        }
+    }
+
+    function refreshTiming(){
+        countTime += 0.02;
+        timerText.innerHTML = toTimeString(countTime);
+    }
+
+    function setReady(){
+        changeTimerColor("#00ff00");
+        isReady = true;
+    }
+
+    function timingStarted(){
+        timerBlock.style.height = "100%";
+        timerBlock.style.position = "absolute";
+        timerBlock.style.top = "0";
+    }
+    // 计时结束
+    function timingFinished(){
+        var endTime = new Date().getTime() - startTime;
+        var countTime = endTime / 1000;
+        var score = new Score(countTime, penaltyState);
+        timerText.innerHTML = score.toString();
+        listScore.unshift(score); // 在数组最前面增加最新成绩
+        refreshScoreTable(); // 刷新显示成绩表
+        // 恢复正常界面
+        timerBlock.style.height = "500px";
+        timerBlock.style.position = "static";
+    }
+
+    function refreshScoreTable(){
+        if(listScore.length <= 5){
+            if (listScore[listScore.length-1]) timeText1.innerHTML = listScore[listScore.length-1].toString();
+            if (listScore[listScore.length-2]) timeText2.innerHTML = listScore[listScore.length-2].toString();
+            if (listScore[listScore.length-3]) timeText3.innerHTML = listScore[listScore.length-3].toString();
+            if (listScore[listScore.length-4]) timeText4.innerHTML = listScore[listScore.length-4].toString();
+            if (listScore[listScore.length-5]) timeText5.innerHTML = listScore[listScore.length-5].toString();
+        }
+        else{
+            timeText1.innerHTML = listScore[4].toString();
+            timeText2.innerHTML = listScore[3].toString();
+            timeText3.innerHTML = listScore[2].toString();;
+            timeText4.innerHTML = listScore[1].toString();
+            timeText5.innerHTML = listScore[0].toString();
+        }
+    }
+
+    function changeTimerColor(color){
+        timerText.style.color = color;
+    }
+
+    function toTimeString(t){
+        if(t == 'DNF') return t;
+        sec = t % 60;
+        t = Math.floor(t / 60);
+        min = t % 60;
+        h = Math.floor(t / 60);
+        if (min == 0)
+            {return String(sec.toFixed(2));}
+        else
+            {return String(min) + ":" + String(sec.toFixed(2));}
+    }
+
+</script>
+{% endblock %}
