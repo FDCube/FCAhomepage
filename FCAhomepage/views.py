@@ -1,9 +1,10 @@
 from django.http import HttpResponse
-from django.shortcuts import render,redirect
+from django.shortcuts import render, redirect
 from database.models import Record
-from FCAhomepage.core.utils import minute_to_sec,sec_to_minute
+from FCAhomepage.core.utils import minute_to_sec, sec_to_minute
 import re
-EventList = ['三阶','二阶','四阶','五阶','六阶', '七阶','单手','三盲','四盲','金字塔','斜转','SQ1','魔表','最少步']
+
+EventList = ['三阶', '二阶', '四阶', '五阶', '六阶', '七阶', '单手', '三盲', '四盲', '金字塔', '斜转', 'SQ1', '魔表', '最少步']
 
 html_hello = """
 <h5>hello world!</h>
@@ -24,6 +25,7 @@ def index(request):
     print("ip:", ip)
     return render(request, "index.html")
 
+
 '''
 def register(request):
     """注册页面"""
@@ -43,7 +45,7 @@ def logout(request):
 
 
 def record(request):
-    events1=[]
+    events1 = []
     events = Record.objects.all()
     events = list(events)
     for i in EventList:
@@ -52,7 +54,7 @@ def record(request):
                 event.time_average = sec_to_minute(event.time_average)
                 event.time_single = sec_to_minute(event.time_single)
                 events1.append(event)
-    return render(request, 'record.html',{'events':events1})
+    return render(request, 'record.html', {'events': events1})
 
 
 def tutorial(request):
@@ -65,12 +67,44 @@ def competition(request):
     return render(request, 'competition.html', {'competitions': competitions})
 
 
+def event(request):
+    all_events = [
+        {'name': "三阶", 'single': "12.50", 'average': "13.66", 'sin_rank': "4", 'avg_rank': "3"},
+        {'name': "二阶", 'single': "4.50", 'average': "5.66", 'sin_rank': "2", 'avg_rank': "2"},
+        {'name': "四阶", 'single': "56.02", 'average': "1:01.22", 'sin_rank': "5", 'avg_rank': "5"},
+        {'name': "五阶", 'single': "1:56.50", 'average': "2:00.00", 'sin_rank': "6", 'avg_rank': "3"},
+    ]  # 全部项目
+    scores = [(1, "13.34+"),(2, "")]  # 当前项目成绩
+    # competition_ =   # 比赛
+    # for event_ in competition_.events:
+    #     name = event_.name
+    #     single =
+    #     average =
+    #     sin_rank =
+    #     avg_rank =
+    #     d = {'name':name, 'single':single}
+    # return render(request, 'competition.html', {'competitions': competitions})
+    return render(request, 'event.html', {'competition_name': "内测线上赛", 'event_name': "三阶", 'round': 1,
+                                          'all_events': all_events, 'scores': scores, })
+
+
+def event_start(request):
+    if request.method == "POST" and request.POST:
+        event_ = request.POST.get('event')
+        round_ = request.POST.get('round')
+        num_ = request.POST.get('num')
+        if event_ is not None and round_ is not None and num_ is not None:
+            round_ = int(round_)
+            num_ = int(num_)
+            # 获取对应打乱
+            ...
+        return render(request, 'compete_timer.html')
+    return redirect('/competition')
+
+
 def timer(request):
     return render(request, 'timer.html')
 
-
-def index2(request,name,student_number):
-    return render(request, "index2.html",{"name":name})
 
 
 def pages(request):

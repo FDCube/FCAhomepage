@@ -48,6 +48,8 @@ urlpatterns = [
     url(r'^record/$', views.record),
     url(r'^tutorial/$', views.tutorial),
     url(r'^competition/$', views.competition),
+    url(r'^event/$', views.event),
+    url(r'^event/start/$', views.event_start),
     url(r'^timer/$', views.timer),
 
 ]
