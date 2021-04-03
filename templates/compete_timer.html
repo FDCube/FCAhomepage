@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计时</title>
+<style>
+    .timer{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: fixed;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgb(200, 255, 255);
+    }
+    .timer-time{
+        color: rgb(0, 0, 0);
+        font-family: "arial";
+        font-size: 150pt;
+        font-weight: bold;
+        text-align: center;
+    }
+</style>
+
+</head>
+
+<body>
+
+<div id="timer" class="timer" align="center">
+    <span id="timer-time" class="timer-time">--.--</span>
+</div>
+
+
+<script>
+    var timerEnabled = true; // 是否允许计时（比如在键盘进行其他输入操作时应该禁用）
+    var timerState = 0;    // 计时状态（0-准备；1-观察中；2-计时中；3-计时完成）
+    var penaltyState = 0;  // 惩罚状态
+    var keyState = 0; // 键盘状态（0-正常；1-按下）
+    var startTimePress = 0.0; // 键盘按下的时间(毫秒时间戳)
+    var readyTimeout;  // 观察时按下后一定时间才可以开始的timeout事件
+    var isReady = false;  // 观察时按下后是否可以开始计时的flag
+    var startScrambleTime = 0.0; // 开始打乱的系统时间(毫秒时间戳)
+    var startInspectTime = 0.0; // 开始观察的系统时间(毫秒时间戳)
+    var countTime = 0.0; // 计时秒数
+    var startTime = 0.0; // 开始计时的系统时间(毫秒时间戳)
+    var timerBlock = document.getElementById("timer");
+    var timerText = document.getElementById("timer-time");
+    var timeText1 = document.getElementById("time1");
+    var timeText2 = document.getElementById("time2");
+    var timeText3 = document.getElementById("time3");
+    var timeText4 = document.getElementById("time4");
+    var timeText5 = document.getElementById("time5");
+    var listScore = [];  // 成绩数组
+
+    // 成绩结构体
+    function Score(time, penalty){
+        this.time = penalty != 1 ? time : time + 2; // 时间(s)（包含+2）
+        this.penalty = penalty; // 惩罚类型
+        this.toString = function(){
+            if (this.penalty == 2) return "DNF";
+            sec = this.time % 60;
+            t = Math.floor(this.time / 60);
+            min = t % 60;
+            h = Math.floor(t / 60);
+            if (min == 0)
+                str = String(sec.toFixed(2));
+            else
+                str = String(min) + ":" + String(sec.toFixed(2));
+            if (this.penalty == 1)
+                str = str + " +";
+            return str;
+        };
+    }
+
+    timerText.innerHTML = "START";
+    document.onkeydown = onKeyDown;
+    document.onkeyup = onKeyUp;
+    timerBlock.ontouchstart = ontouchStart;
+    timerBlock.ontouchend = ontouchEnd;
+    window.onload = onLoad;
+
+    function onLoad(){
+        startScrambling();
+    }
+
+    function press(){
+        if (timerEnabled){
+            if (timerState == 1){ // 观察时按下（准备开始）
+                if (keyState == 0){  // 只处理第一次的按下事件
+                    startTimePress = new Date().getTime();
+                    changeTimerColor("red");
+                    readyTimeout = setTimeout(setReady, 500);
+                }
+            }
+            else if (timerState == 2){ // 计时时按下（结束）
+                timerState = 3;
+                clearInterval(runTimer);
+                changeTimerColor("black");
+                timingFinished();
+                // document.exitFullscreen();
+            }
+            else if (timerState == 3){ // 完成时按下（复位）
+                timerState = 0;
+            }
+            keyState = 1;
+        }
+    }
+
+    function release(){
+        if (timerEnabled){
+            if (timerState == 0){ // 准备时放手（开始观察）
+                timerState = 1
+                changeTimerColor("blue");
+                // timerBlock.requestFullscreen();
+                clearInterval(runScramble);
+                countTime = 15;
+                startInspectTime = new Date().getTime();
+                runInspect = setInterval(refreshInspecting, 20);
+                timingStarted();
+            }
+            else if (timerState == 1){ // 观察时放手（开始计时）
+                clearTimeout(readyTimeout);
+                changeTimerColor("blue");
+                if (isReady){
+                    clearInterval(runInspect); // 结束观察
+                    isReady = false;
+                    changeTimerColor("darkgrey");
+                    timerState = 2
+                    countTime = 0.0;
+                    startTime = new Date().getTime();
+                    runTimer = setInterval(refreshTiming, 20);
+                }
+            }
+            keyState = 0;
+        }
+    }
+
+    function onKeyDown(e){
+        var event = e || window.event || arguments.callee.caller.arguments[0];
+        if (e.keyCode == 32)
+            press();
+    }
+    function onKeyUp(e){
+        var event = e || window.event || arguments.callee.caller.arguments[0];
+        if (e.keyCode == 32)
+            release();
+    }
+    function ontouchStart(e){
+        e.preventDefault();
+        press();
+    }
+    function ontouchEnd(e){
+        release();
+    }
+
+    function refreshScrambling(){
+        countTime -= 0.02;
+        if (countTime >= 0){
+            timerText.innerHTML = Math.ceil(countTime);
+        }
+        else{
+            timerText.innerHTML = "DNS";
+            timerEnabled = false;
+        }
+    }
+
+    function refreshInspecting(){
+        countTime -= 0.02;
+        if (countTime >= 0){
+            penaltyState = 0;
+            timerText.innerHTML = Math.ceil(countTime);
+        }
+        else if (countTime >= -2) {
+            penaltyState = 1;
+            timerText.innerHTML = "+2";
+        }
+        else{
+            penaltyState = 2;
+            timerText.innerHTML = "DNF";
+        }
+    }
+
+    function refreshTiming(){
+        countTime += 0.02;
+        timerText.innerHTML = toTimeString(countTime);
+    }
+
+    function setReady(){
+        changeTimerColor("#00ff00");
+        isReady = true;
+    }
+
+    function startScrambling(){
+        countTime = 40;
+        startScrambleTime = new Date().getTime();
+        runScramble = setInterval(refreshScrambling, 20);
+    }
+
+    function timingStarted(){
+
+    }
+    // 计时结束
+    function timingFinished(){
+        var endTime = new Date().getTime() - startTime;
+        var countTime = endTime / 1000;
+        var score = new Score(countTime, penaltyState);
+        timerText.innerHTML = score.toString();
+        // 发送报表提交成绩
+    }
+
+    function changeTimerColor(color){
+        timerText.style.color = color;
+    }
+
+    function toTimeString(t){
+        if(t == 'DNF') return t;
+        sec = t % 60;
+        t = Math.floor(t / 60);
+        min = t % 60;
+        h = Math.floor(t / 60);
+        if (min == 0)
+            {return String(sec.toFixed(2));}
+        else
+            {return String(min) + ":" + String(sec.toFixed(2));}
+    }
+
+
+</script>
+
+</body>
+</html>
