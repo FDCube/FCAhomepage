@@ -75,25 +75,39 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Competition(models.Model):
-    competition = models.CharField(primary_key=True, max_length=30)
-    time = models.CharField(max_length=20, blank=True, null=True)
+    competition_name = models.CharField(primary_key=True, max_length=30)
+    competition_turn = models.CharField(max_length=20)
+    cubeevent = models.CharField(db_column='CubeEvent', max_length=20)  # Field name made lowercase.
+    competition_time = models.DateTimeField(blank=True, null=True)
+    scramble1 = models.CharField(max_length=100, blank=True, null=True)
+    scramble2 = models.CharField(max_length=100, blank=True, null=True)
+    scramble3 = models.CharField(max_length=100, blank=True, null=True)
+    scramble4 = models.CharField(max_length=100, blank=True, null=True)
+    scramble5 = models.CharField(max_length=100, blank=True, null=True)
+    scramble_extra1 = models.CharField(max_length=100, blank=True, null=True)
+    scramble_extra2 = models.CharField(max_length=100, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'competition'
+        unique_together = (('competition_name', 'competition_turn', 'cubeevent'),)
 
 
 class CompetitionTime(models.Model):
-    studentnumber = models.CharField(primary_key=True, max_length=20)
-    competition = models.CharField(max_length=30)
-    cube_event = models.CharField(max_length=20)
-    average_time = models.FloatField(blank=True, null=True)
-    single_time = models.FloatField(blank=True, null=True)
+    competition_name = models.CharField(primary_key=True, max_length=30)
+    competition_turn = models.CharField(max_length=20)
+    cubeevent = models.CharField(db_column='CubeEvent', max_length=20)  # Field name made lowercase.
+    studentnumber = models.CharField(max_length=20)
+    time1 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    time2 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    time3 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    time4 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    time5 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False
         db_table = 'competition_time'
-        unique_together = (('studentnumber', 'competition', 'cube_event'),)
+        unique_together = (('competition_name', 'competition_turn', 'cubeevent', 'studentnumber'),)
 
 
 class DatabaseLogin(models.Model):

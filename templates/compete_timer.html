@@ -1,13 +1,17 @@
-{% extends "base.html" %}
-
-{% block style %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>计时</title>
 <style>
     .timer{
         display: flex;
         align-items: center;
         justify-content: center;
+        position: fixed;
+        top: 0;
         width: 100%;
-        height: 500px;
+        height: 100%;
         background-color: rgb(200, 255, 255);
     }
     .timer-time{
@@ -17,64 +21,17 @@
         font-weight: bold;
         text-align: center;
     }
-    .div-score-table{
-    }
-    .score-table{
-        border: 5px solid rgb(100, 230, 230);
-        font-family: "arial";
-        font-size: 20pt;
-        text-align: center;
-    }
-    .table-title{
-        background-color: rgb(0, 100, 240);
-    }
-    .table-odd{
-        background-color: rgb(200, 240, 255);
-    }
-    .table-even{
-        background-color: rgb(230, 255, 255);
-    }
 </style>
-{% endblock %}
 
-{% block content %}
+</head>
+
+<body>
+
 <div id="timer" class="timer" align="center">
     <span id="timer-time" class="timer-time">--.--</span>
 </div>
-<div class="div-score-table">
-    <table class="score-table">
-        <thead class="table-title">
-        <tr>
-            <th style="padding: 0px 10px;">序号</th>
-            <th style="padding: 0px 30px;">成绩</th>
-        </tr>
-        </thead>
-        <tr class="table-even">
-            <th>1</th>
-            <th id="time1"> </th>
-        </tr>
-        <tr class="table-odd">
-            <th>2</th>
-            <th id="time2"> </th>
-        </tr>
-        <tr class="table-even">
-            <th>3</th>
-            <th id="time3"> </th>
-        </tr>
-        <tr class="table-odd">
-            <th>4</th>
-            <th id="time4"> </th>
-        </tr>
-        <tr class="table-even">
-            <th>5</th>
-            <th id="time5"> </th>
-        </tr>
-    </table>
-</div>
-{% endblock %}
 
 
-{% block foot_script %}
 <script>
     var timerEnabled = true; // 是否允许计时（比如在键盘进行其他输入操作时应该禁用）
     var timerState = 0;    // 计时状态（0-准备；1-观察中；2-计时中；3-计时完成）
@@ -83,6 +40,7 @@
     var startTimePress = 0.0; // 键盘按下的时间(毫秒时间戳)
     var readyTimeout;  // 观察时按下后一定时间才可以开始的timeout事件
     var isReady = false;  // 观察时按下后是否可以开始计时的flag
+    var startScrambleTime = 0.0; // 开始打乱的系统时间(毫秒时间戳)
     var startInspectTime = 0.0; // 开始观察的系统时间(毫秒时间戳)
     var countTime = 0.0; // 计时秒数
     var startTime = 0.0; // 开始计时的系统时间(毫秒时间戳)
@@ -115,11 +73,16 @@
         };
     }
 
-    timerText.innerHTML = toTimeString(countTime);
+    timerText.innerHTML = "START";
     document.onkeydown = onKeyDown;
     document.onkeyup = onKeyUp;
     timerBlock.ontouchstart = ontouchStart;
     timerBlock.ontouchend = ontouchEnd;
+    window.onload = onLoad;
+
+    function onLoad(){
+        startScrambling();
+    }
 
     function press(){
         if (timerEnabled){
@@ -133,6 +96,7 @@
             else if (timerState == 2){ // 计时时按下（结束）
                 timerState = 3;
                 clearInterval(runTimer);
+                changeTimerColor("black");
                 timingFinished();
                 // document.exitFullscreen();
             }
@@ -149,6 +113,7 @@
                 timerState = 1
                 changeTimerColor("blue");
                 // timerBlock.requestFullscreen();
+                clearInterval(runScramble);
                 countTime = 15;
                 startInspectTime = new Date().getTime();
                 runInspect = setInterval(refreshInspecting, 20);
@@ -160,7 +125,7 @@
                 if (isReady){
                     clearInterval(runInspect); // 结束观察
                     isReady = false;
-                    changeTimerColor("black");
+                    changeTimerColor("darkgrey");
                     timerState = 2
                     countTime = 0.0;
                     startTime = new Date().getTime();
@@ -189,6 +154,17 @@
         release();
     }
 
+    function refreshScrambling(){
+        countTime -= 0.02;
+        if (countTime >= 0){
+            timerText.innerHTML = Math.ceil(countTime);
+        }
+        else{
+            timerText.innerHTML = "DNS";
+            timerEnabled = false;
+        }
+    }
+
     function refreshInspecting(){
         countTime -= 0.02;
         if (countTime >= 0){
@@ -215,10 +191,14 @@
         isReady = true;
     }
 
+    function startScrambling(){
+        countTime = 40;
+        startScrambleTime = new Date().getTime();
+        runScramble = setInterval(refreshScrambling, 20);
+    }
+
     function timingStarted(){
-        timerBlock.style.height = "100%";
-        timerBlock.style.position = "absolute";
-        timerBlock.style.top = "0";
+
     }
     // 计时结束
     function timingFinished(){
@@ -226,28 +206,7 @@
         var countTime = endTime / 1000;
         var score = new Score(countTime, penaltyState);
         timerText.innerHTML = score.toString();
-        listScore.unshift(score); // 在数组最前面增加最新成绩
-        refreshScoreTable(); // 刷新显示成绩表
-        // 恢复正常界面
-        timerBlock.style.height = "500px";
-        timerBlock.style.position = "static";
-    }
-
-    function refreshScoreTable(){
-        if(listScore.length <= 5){
-            if (listScore[listScore.length-1]) timeText1.innerHTML = listScore[listScore.length-1].toString();
-            if (listScore[listScore.length-2]) timeText2.innerHTML = listScore[listScore.length-2].toString();
-            if (listScore[listScore.length-3]) timeText3.innerHTML = listScore[listScore.length-3].toString();
-            if (listScore[listScore.length-4]) timeText4.innerHTML = listScore[listScore.length-4].toString();
-            if (listScore[listScore.length-5]) timeText5.innerHTML = listScore[listScore.length-5].toString();
-        }
-        else{
-            timeText1.innerHTML = listScore[4].toString();
-            timeText2.innerHTML = listScore[3].toString();
-            timeText3.innerHTML = listScore[2].toString();;
-            timeText4.innerHTML = listScore[1].toString();
-            timeText5.innerHTML = listScore[0].toString();
-        }
+        // 发送报表提交成绩
     }
 
     function changeTimerColor(color){
@@ -266,5 +225,8 @@
             {return String(min) + ":" + String(sec.toFixed(2));}
     }
 
+
 </script>
-{% endblock %}
+
+</body>
+</html>

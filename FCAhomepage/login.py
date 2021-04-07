@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect,reverse
 from database.models import Person,Competition,Competition
-from .views import index2
 
 def login_action(request):
     request.encoding = 'utf-8'
@@ -25,6 +24,5 @@ def login_action(request):
             request.session['student_number'] = student_number
             request.session['name'] = name
             return redirect('/')
-            return redirect(reverse('index2', kwargs={'name': name, 'student_number': student_number}))
     else:
         return render(request, "login.html")

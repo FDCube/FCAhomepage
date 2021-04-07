@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>比赛</h2>
+<table width = '400' border="1" align="center">
+    <thead>
+    <tr>
+        <th align="center">名称</th>
+        <th align="center">时间</th>
+        <th align="center">状态</th>
+        <th align="center">项目</th>
+        <th align="center">操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {%  for com in competitions %}
+    <tr>
+        {% if com.name_single %}
+        <td align="center">{{ event.cubeevent}}</td>
+        <td align="center">{{ event.name_single}}</td>
+        <td align="center">{{ event.time_single}}</td>
+        <td>&nbsp;</td>
+        {% endif %}
+    </tr>
+    <tr>
+        {% if event.name_average %}
+        <td align="center">{{ event.cubeevent}}</td>
+        <td align="center">{{ event.name_average}}</td>
+        <td>&nbsp;</td>
+        <td align="center">{{ event.time_average}}</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+    </tbody>
+
+
+</table>
+{% endblock %}
