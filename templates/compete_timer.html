@@ -201,12 +201,30 @@
 
     }
     // 计时结束
+    function post(URL, PARAMS) {  // 这个函数是我抄来的，我也不懂原理
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "post";
+        temp.style.display = "none";
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            // alert(opt.name)
+            temp.appendChild(opt);
+        }
+        document.body.appendChild(temp);
+        temp.submit();
+        return temp;
+    }
     function timingFinished(){
         var endTime = new Date().getTime() - startTime;
         var countTime = endTime / 1000;
         var score = new Score(countTime, penaltyState);
         timerText.innerHTML = score.toString();
+
         // 发送报表提交成绩
+        setTimeout(() => post('/event/submit/',{a:score}), 500)
     }
 
     function changeTimerColor(color){

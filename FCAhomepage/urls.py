@@ -27,7 +27,7 @@ from django.conf.urls import url
 from django.contrib import admin
 from django.urls import include, path
 
-from . import views,testdb,register,login,modify
+from . import views,testdb,register,login,modify,competition,event
 
 urlpatterns = [
     url(r'^$', views.index),
@@ -47,9 +47,12 @@ urlpatterns = [
     url(r'^modify_action/$', modify.modify_action),
     url(r'^record/$', views.record),
     url(r'^tutorial/$', views.tutorial),
-    url(r'^competition/$', views.competition),
-    url(r'^event/$', views.event),
-    url(r'^event/start/$', views.event_start),
+    url(r'^competition/$', competition.competition),
+    url(r'^event/$', event.event),
+    url(r'^event/start/$', event.event_start),
+    url(r'^event/submit/$', event.event_submit),
     url(r'^timer/$', views.timer),
+    url(r'^competition_register/$', competition.competition_register),
+    url(r'^competition_cancel/$', competition.competition_cancel),
 
 ]

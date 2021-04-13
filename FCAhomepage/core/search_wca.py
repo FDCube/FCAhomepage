@@ -151,6 +151,7 @@ def get_competitor_by_wca_id(wca_id: str) -> Optional[Competitor]:
         competitor.records[td_s[0].text] = event
 
     print(competitor)
+    return competitor
 
 
 def get_wca_id_by_name(name: str) -> Optional[List[str]]:

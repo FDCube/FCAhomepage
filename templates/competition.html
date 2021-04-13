@@ -2,37 +2,81 @@
 
 {% block content %}
 <h2>比赛</h2>
-<table width = '400' border="1" align="center">
+<table id = 'table' width = '600' border="1" align="center">
     <thead>
     <tr>
         <th align="center">名称</th>
+        <th align="center">轮次</th>
         <th align="center">时间</th>
-        <th align="center">状态</th>
         <th align="center">项目</th>
+        <th align="center">状态</th>
         <th align="center">操作</th>
     </tr>
     </thead>
     <tbody>
-    {%  for com in competitions %}
+
+    {%  for come in competitions %}
     <tr>
-        {% if com.name_single %}
-        <td align="center">{{ event.cubeevent}}</td>
-        <td align="center">{{ event.name_single}}</td>
-        <td align="center">{{ event.time_single}}</td>
-        <td>&nbsp;</td>
+
+        <td align="center">{{ come.0}}</td>
+        <td align="center">{{ come.1}}</td>
+        <td align="center">{{ come.2}}</td>
+        <td align="center">{{ come.3}}</td>
+        <td align="center">{{ come.4}}</td>
+        {% if come.5 %}
+            <td align="center"><button id = '{{ come.6 }}' onclick = 'dianji(this.id)' >{{ come.5 }}</button></td>
+        {% else %}
+            <td></td>
         {% endif %}
-    </tr>
-    <tr>
-        {% if event.name_average %}
-        <td align="center">{{ event.cubeevent}}</td>
-        <td align="center">{{ event.name_average}}</td>
-        <td>&nbsp;</td>
-        <td align="center">{{ event.time_average}}</td>
-        {% endif %}
+
     </tr>
     {% endfor %}
     </tbody>
 
 
 </table>
+
+    <script src="http://apps.bdimg.com/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+    function post(URL, PARAMS) {  // 这个函数是我抄来的，我也不懂原理
+        var temp = document.createElement("form");
+        temp.action = URL;
+        temp.method = "post";
+        temp.style.display = "none";
+        for (var x in PARAMS) {
+            var opt = document.createElement("textarea");
+            opt.name = x;
+            opt.value = PARAMS[x];
+            // alert(opt.name)
+            temp.appendChild(opt);
+        }
+        document.body.appendChild(temp);
+        temp.submit();
+        return temp;
+    }
+    function dianji(id){
+        var now = document.getElementById(id).parentNode;
+        var line = now.parentNode.rowIndex;
+        var cells = document.getElementById('table').rows[line].cells;
+        //document.getElementById(id).innerText = cells[1].innerHTML;
+        var a = cells[0].innerHTML;
+        var b = cells[1].innerHTML;
+        var c = cells[3].innerHTML;
+        if(document.getElementById(id).innerText == '取消报名'){
+            con=confirm("是否取消报名？"+a+' '+b+' '+c);
+                if (con != true)return;
+            post('/competition_cancel/',{a:a,b:b,c:c});
+        }
+        else if(document.getElementById(id).innerText == '参加比赛'){
+            con=confirm("是否参加比赛？"+a+' '+b+' '+c);
+                if (con != true)return;
+            post('/event/',{a:c});
+        }
+        else{
+            con=confirm("是否报名此项目？"+a+' '+b+' '+c);
+                if (con != true)return;
+            post('/competition_register/',{a:a,b:b,c:c});
+        }
+    }
+    </script>
 {% endblock %}

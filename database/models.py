@@ -79,6 +79,7 @@ class Competition(models.Model):
     competition_turn = models.CharField(max_length=20)
     cubeevent = models.CharField(db_column='CubeEvent', max_length=20)  # Field name made lowercase.
     competition_time = models.DateTimeField(blank=True, null=True)
+    duration = models.IntegerField(blank=True, null=True)
     scramble1 = models.CharField(max_length=100, blank=True, null=True)
     scramble2 = models.CharField(max_length=100, blank=True, null=True)
     scramble3 = models.CharField(max_length=100, blank=True, null=True)
@@ -98,11 +99,13 @@ class CompetitionTime(models.Model):
     competition_turn = models.CharField(max_length=20)
     cubeevent = models.CharField(db_column='CubeEvent', max_length=20)  # Field name made lowercase.
     studentnumber = models.CharField(max_length=20)
-    time1 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    time2 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    time3 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    time4 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
-    time5 = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    time1 = models.CharField(max_length=20, blank=True, null=True)
+    time2 = models.CharField(max_length=20, blank=True, null=True)
+    time3 = models.CharField(max_length=20, blank=True, null=True)
+    time4 = models.CharField(max_length=20, blank=True, null=True)
+    time5 = models.CharField(max_length=20, blank=True, null=True)
+    single = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    average = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False

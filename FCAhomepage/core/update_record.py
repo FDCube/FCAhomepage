@@ -1,5 +1,5 @@
-from search_wca import get_competitor_by_wca_id
-from utils import minute_to_sec,sec_to_minute
+from FCAhomepage.core.search_wca import get_competitor_by_wca_id
+from FCAhomepage.core.utils import minute_to_sec,sec_to_minute
 import decimal
 import pymysql  # 这里我还是决定用pymysql，和网页无关，手动更新校记录。每隔一段时间执行此程序即可根据所有在校同学的id更新校记录
 

@@ -60,34 +60,6 @@ def record(request):
 def tutorial(request):
     return render(request, 'tutorial.html')
 
-
-def competition(request):
-    competitions = []
-
-    return render(request, 'competition.html', {'competitions': competitions})
-
-
-def event(request):
-    all_events = [
-        {'name': "三阶", 'single': "12.50", 'average': "13.66", 'sin_rank': "4", 'avg_rank': "3"},
-        {'name': "二阶", 'single': "4.50", 'average': "5.66", 'sin_rank': "2", 'avg_rank': "2"},
-        {'name': "四阶", 'single': "56.02", 'average': "1:01.22", 'sin_rank': "5", 'avg_rank': "5"},
-        {'name': "五阶", 'single': "1:56.50", 'average': "2:00.00", 'sin_rank': "6", 'avg_rank': "3"},
-    ]  # 全部项目
-    scores = [(1, "13.34+"),(2, "")]  # 当前项目成绩
-    # competition_ =   # 比赛
-    # for event_ in competition_.events:
-    #     name = event_.name
-    #     single =
-    #     average =
-    #     sin_rank =
-    #     avg_rank =
-    #     d = {'name':name, 'single':single}
-    # return render(request, 'competition.html', {'competitions': competitions})
-    return render(request, 'event.html', {'competition_name': "内测线上赛", 'event_name': "三阶", 'round': 1,
-                                          'all_events': all_events, 'scores': scores, })
-
-
 def event_start(request):
     if request.method == "POST" and request.POST:
         event_ = request.POST.get('event')

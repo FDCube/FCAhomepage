@@ -13,22 +13,24 @@
     </thead>
     <tbody>
     {%  for event in events %}
-    <tr>
         {% if event.name_single %}
+    <tr>
         <td align="center">{{ event.cubeevent}}</td>
         <td align="center">{{ event.name_single}}</td>
         <td align="center">{{ event.time_single}}</td>
         <td>&nbsp;</td>
-        {% endif %}
     </tr>
-    <tr>
+        {% endif %}
         {% if event.name_average %}
+    <tr>
+
         <td align="center">{{ event.cubeevent}}</td>
         <td align="center">{{ event.name_average}}</td>
         <td>&nbsp;</td>
         <td align="center">{{ event.time_average}}</td>
-        {% endif %}
+
     </tr>
+        {% endif %}
     {% endfor %}
     </tbody>
 
