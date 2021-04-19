@@ -3,12 +3,23 @@
 {% block style %}
 <style>
     .timer{
-        display: flex;
+        display: block;
         align-items: center;
         justify-content: center;
         width: 100%;
         height: 500px;
         background-color: rgb(200, 255, 255);
+    }
+    .scramble{
+        position: relative;
+        top: 10px;
+        max-width: 80%;
+        color: rgb(0, 0, 0);
+        font-family: "arial";
+        font-size: 40pt;
+        font-weight: bold;
+        text-align: center;
+        word-wrap: break-word;
     }
     .timer-time{
         color: rgb(0, 0, 0);
@@ -39,7 +50,8 @@
 
 {% block content %}
 <div id="timer" class="timer" align="center">
-    <span id="timer-time" class="timer-time">--.--</span>
+    <div id="scramble" class="scramble"></div>
+    <div id="timer-time" class="timer-time">--.--</div>
 </div>
 <div class="div-score-table">
     <table class="score-table">
@@ -87,6 +99,7 @@
     var countTime = 0.0; // 计时秒数
     var startTime = 0.0; // 开始计时的系统时间(毫秒时间戳)
     var timerBlock = document.getElementById("timer");
+    var scrambleText = document.getElementById("scramble");
     var timerText = document.getElementById("timer-time");
     var timeText1 = document.getElementById("time1");
     var timeText2 = document.getElementById("time2");
@@ -120,6 +133,11 @@
     document.onkeyup = onKeyUp;
     timerBlock.ontouchstart = ontouchStart;
     timerBlock.ontouchend = ontouchEnd;
+    window.onload = onLoad;
+
+    function onLoad(){
+        showNewScramble();
+    }
 
     function press(){
         if (timerEnabled){
@@ -134,6 +152,7 @@
                 timerState = 3;
                 clearInterval(runTimer);
                 timingFinished();
+                showNewScramble();
                 // document.exitFullscreen();
             }
             else if (timerState == 3){ // 完成时按下（复位）
@@ -216,9 +235,11 @@
     }
 
     function timingStarted(){
+        timerBlock.style.display = "flex";
         timerBlock.style.height = "100%";
         timerBlock.style.position = "absolute";
         timerBlock.style.top = "0";
+        scrambleText.style.display = "none";
     }
     // 计时结束
     function timingFinished(){
@@ -229,8 +250,16 @@
         listScore.unshift(score); // 在数组最前面增加最新成绩
         refreshScoreTable(); // 刷新显示成绩表
         // 恢复正常界面
+        timerBlock.style.display = "block";
+        timerBlock.style.alignItems = "center";
+        timerBlock.style.justifyContent = "center";
         timerBlock.style.height = "500px";
         timerBlock.style.position = "static";
+        scrambleText.style.display = "block";
+    }
+
+    function showNewScramble(){
+        scrambleText.innerHTML = getScramble(20);
     }
 
     function refreshScoreTable(){
@@ -244,7 +273,7 @@
         else{
             timeText1.innerHTML = listScore[4].toString();
             timeText2.innerHTML = listScore[3].toString();
-            timeText3.innerHTML = listScore[2].toString();;
+            timeText3.innerHTML = listScore[2].toString();
             timeText4.innerHTML = listScore[1].toString();
             timeText5.innerHTML = listScore[0].toString();
         }
@@ -264,6 +293,30 @@
             {return String(sec.toFixed(2));}
         else
             {return String(min) + ":" + String(sec.toFixed(2));}
+    }
+
+    // 生成三阶打乱
+    function checkMove(move, arr) { // 检测步骤合理性
+        var len = arr.length;
+        return move == arr[len - 1] || (move == arr[len - 2] && (move / 2 | 0) == (arr[len - 1] / 2 | 0));
+    }
+
+    function getScramble(maxSteps) { // 生成随机打乱步骤
+        var cubeArr = [], // 打乱步骤数组
+            scrambleStr = "", // 打乱步骤字符串
+            face = ["R", "L", "F", "B", "U", "D"], // 步骤
+            direction = ["", "", "'", "'", "2"], // 步骤附加条件
+            r, // 随机数
+            i;
+        maxSteps = 20;
+        for (i = 0; i < maxSteps; i++) {
+            do {
+                r = Math.random() * 6 | 0;
+            } while (checkMove(r, cubeArr));
+            cubeArr.push(r);
+            scrambleStr += face[r] + direction[Math.random() * 5 | 0] + " ";
+        }
+        return scrambleStr;
     }
 
 </script>
