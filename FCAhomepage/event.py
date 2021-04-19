@@ -5,6 +5,7 @@ import datetime
 import decimal
 from FCAhomepage.core.utils import single,average,sec_to_minute
 
+
 def event(request):
     student_number = request.session['student_number']
     eventlist = Competition.objects.all()
@@ -33,14 +34,16 @@ def event(request):
         if signed == 0:  # 没有报名任何正在进行的比赛
             competition_name = ' '  # 一个空格
 
-    event_now = request.session['event']  # 如果session里有event，更改event_now
+    if request.session.get('event'):
+        event_now = request.session['event']  # 如果session里有event，更改event_now
     if request.POST:  # 如果接受了下拉框选择或线上赛页面直接进入的post，改变event_now
-        event_now = request.POST.get('a')
+        event_now = request.POST.get('event')
     request.session['event'] = event_now
 
     # 传入已经计时的成绩
     if signed == 1:
         scores = []  # 传入前端的成绩，[(),(),()...]
+        print(student_number, competition_name, round, event_now)
         line = CompetitionTime.objects.filter(studentnumber=student_number,competition_name=competition_name,
                                               competition_turn=round,cubeevent=event_now)
         for i in line:  # 应该只有一条记录
@@ -109,7 +112,7 @@ def event_start(request):
         competition_ = request.POST.get('competition_name')
         event_ = request.POST.get('event')
         round_ = request.POST.get('round')
-        num_ = request.POST.get('num')
+        num_ = request.POST.get('num')  # 当前轮次
         # 存在session里
         request.session['competition_name'] = competition_
         #request.session['event'] = event_  # 前面event函数已经存过了
@@ -123,8 +126,9 @@ def event_start(request):
             line = Competition.objects.filter(competition_name=competition_,competition_turn=round_,cubeevent=event_)
             for i in line:
                 scramblelist = [i.scramble1,i.scramble2,i.scramble3,i.scramble4,i.scramble5,i.scramble_extra1,i.scramble_extra2]
+            scramble = scramblelist[num_ - 1]
 
-        return render(request, 'compete_timer.html')
+        return render(request, 'compete_timer.html',{'scramble': scramble})
     return redirect('/competition')
 
 def event_submit(request):

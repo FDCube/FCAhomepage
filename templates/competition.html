@@ -2,29 +2,30 @@
 
 {% block content %}
 <h2>比赛</h2>
-<table id = 'table' width = '600' border="1" align="center">
+<table id = 'table' width = '700' border="1" align="center">
     <thead>
     <tr>
         <th align="center">名称</th>
-        <th align="center">轮次</th>
-        <th align="center">时间</th>
         <th align="center">项目</th>
+<!--        <th align="center">轮次</th>-->
+        <th align="center">开始时间</th>
+        <th align="center">结束时间</th>
         <th align="center">状态</th>
         <th align="center">操作</th>
     </tr>
     </thead>
     <tbody>
 
-    {%  for come in competitions %}
+    {%  for comp in competitions %}
     <tr>
 
-        <td align="center">{{ come.0}}</td>
-        <td align="center">{{ come.1}}</td>
-        <td align="center">{{ come.2}}</td>
-        <td align="center">{{ come.3}}</td>
-        <td align="center">{{ come.4}}</td>
-        {% if come.5 %}
-            <td align="center"><button id = '{{ come.6 }}' onclick = 'dianji(this.id)' >{{ come.5 }}</button></td>
+        <td align="center">{{ comp.name}}</td>
+        <td align="center">{{ comp.cube_event}}</td>
+        <td align="center">{{ comp.start_time}}</td>
+        <td align="center">{{ comp.end_time}}</td>
+        <td align="center">{{ comp.state_text}}</td>
+        {% if comp.btn_text %}
+            <td align="center"><button id = '{{ comp.btn_id }}' onclick = 'dianji(this.id)' >{{ comp.btn_text }}</button></td>
         {% else %}
             <td></td>
         {% endif %}
@@ -59,23 +60,23 @@
         var line = now.parentNode.rowIndex;
         var cells = document.getElementById('table').rows[line].cells;
         //document.getElementById(id).innerText = cells[1].innerHTML;
-        var a = cells[0].innerHTML;
-        var b = cells[1].innerHTML;
-        var c = cells[3].innerHTML;
+        var name = cells[0].innerHTML;
+        var event = cells[1].innerHTML;
+        // var turn = cells[].innerHTML;
         if(document.getElementById(id).innerText == '取消报名'){
-            con=confirm("是否取消报名？"+a+' '+b+' '+c);
-                if (con != true)return;
-            post('/competition_cancel/',{a:a,b:b,c:c});
+            con=confirm("是否取消报名？"+name+' '+event);
+                if (!con)return;
+            post('/competition_cancel/',{name:name,event:event});
         }
         else if(document.getElementById(id).innerText == '参加比赛'){
-            con=confirm("是否参加比赛？"+a+' '+b+' '+c);
-                if (con != true)return;
-            post('/event/',{a:c});
+            con=confirm("是否参加比赛？"+name+' '+event);
+                if (!con)return;
+            post('/event/',{event:event});
         }
-        else{
-            con=confirm("是否报名此项目？"+a+' '+b+' '+c);
-                if (con != true)return;
-            post('/competition_register/',{a:a,b:b,c:c});
+        else if(document.getElementById(id).innerText == '报名'){
+            con=confirm("是否报名此项目？"+name+' '+event);
+                if (!con)return;
+            post('/competition_register/',{name:name,event:event});
         }
     }
     </script>

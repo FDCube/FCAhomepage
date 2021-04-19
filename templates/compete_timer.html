@@ -14,6 +14,19 @@
         height: 100%;
         background-color: rgb(200, 255, 255);
     }
+    .scramble{
+        display: block;
+        position: fixed;
+        top: 10px;
+        max-width: 80%;
+        color: rgb(0, 0, 0);
+        font-family: "arial";
+        font-size: 50pt;
+        font-weight: bold;
+        text-align: center;
+        text-wrap: normal;
+        word-wrap: break-word;
+    }
     .timer-time{
         color: rgb(0, 0, 0);
         font-family: "arial";
@@ -28,6 +41,7 @@
 <body>
 
 <div id="timer" class="timer" align="center">
+    <span id="scramble" class="scramble">{{scramble}}</span>
     <span id="timer-time" class="timer-time">--.--</span>
 </div>
 
@@ -110,10 +124,11 @@
     function release(){
         if (timerEnabled){
             if (timerState == 0){ // 准备时放手（开始观察）
-                timerState = 1
+                timerState = 1;
                 changeTimerColor("blue");
+                document.getElementById("scramble").innerHTML = "";
                 // timerBlock.requestFullscreen();
-                clearInterval(runScramble);
+                // clearInterval(runScramble);
                 countTime = 15;
                 startInspectTime = new Date().getTime();
                 runInspect = setInterval(refreshInspecting, 20);
@@ -154,7 +169,7 @@
         release();
     }
 
-    function refreshScrambling(){
+    /*function refreshScrambling(){
         countTime -= 0.02;
         if (countTime >= 0){
             timerText.innerHTML = Math.ceil(countTime);
@@ -163,7 +178,7 @@
             timerText.innerHTML = "DNS";
             timerEnabled = false;
         }
-    }
+    }*/
 
     function refreshInspecting(){
         countTime -= 0.02;
@@ -192,9 +207,10 @@
     }
 
     function startScrambling(){
-        countTime = 40;
-        startScrambleTime = new Date().getTime();
-        runScramble = setInterval(refreshScrambling, 20);
+        timerText.innerHTML = "打乱";
+        // countTime = 40;
+        // startScrambleTime = new Date().getTime();
+        // runScramble = setInterval(refreshScrambling, 20);
     }
 
     function timingStarted(){
