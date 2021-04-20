@@ -7,7 +7,7 @@ def modify(request):
     student_number = request.session['student_number']
     name = request.session['name']
     # 发起查询
-    line = Person.objects.filter(studentnumber=18307110137)
+    line = Person.objects.filter(studentnumber=student_number)
     for var in line:
         college = var.college  # 查询得到学院和专业
         major = var.major
