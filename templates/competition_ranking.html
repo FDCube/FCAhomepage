@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2 style="text-align:center">{{ competition_name }} {{ event }}</h2>
+<table width = '600' border="1" align="center">
+    <thead>
+    <tr>
+        <th align="center">排名</th>
+        <th align="center">选手</th>
+        <th align="center">最好</th>
+        <th align="center">平均</th>
+        <th>详情</th>
+
+    </tr>
+    </thead>
+    <tbody>
+    {%  for ranking in rankings %}
+
+    <tr>
+
+        <td align="center">{{ ranking.rank }}</td>
+        <td align="center">{{ ranking.name }}</td>
+        <td align="center">{{ ranking.single }}</td>
+        <td align="center">{{ ranking.average }}</td>
+        <td align="center">{{ ranking.time1 }} | {{ ranking.time2 }} | {{ ranking.time3 }} | {{ ranking.time4 }} | {{ ranking.time5 }}</td>
+
+    </tr>
+    {% endfor %}
+    </tbody>
+
+
+</table>
+{% endblock %}

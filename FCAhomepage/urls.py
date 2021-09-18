@@ -54,5 +54,6 @@ urlpatterns = [
     url(r'^timer/$', views.timer),
     url(r'^competition_register/$', competition.competition_register),
     url(r'^competition_cancel/$', competition.competition_cancel),
+    url(r'^competition_ranking/$', competition.competition_ranking),
 
 ]

@@ -175,5 +175,5 @@ def get_wca_id_by_name(name: str) -> Optional[List[str]]:
 
 
 if __name__ == '__main__':
-    # get_competitor_by_wca_id("2018JIAN42")
-    get_wca_id_by_name("董")
+    get_competitor_by_wca_id("2017DENG14")
+    #get_wca_id_by_name("董")

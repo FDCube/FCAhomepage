@@ -12,6 +12,7 @@
         <th align="center">结束时间</th>
         <th align="center">状态</th>
         <th align="center">操作</th>
+        <th align="center">排行</th>
     </tr>
     </thead>
     <tbody>
@@ -29,6 +30,12 @@
         {% else %}
             <td></td>
         {% endif %}
+        {% if comp.btn_text2 %}
+            <td align="center"><button id = '{{ comp.btn_id2 }}' onclick = 'dianji(this.id)' >{{ comp.btn_text2 }}</button></td>
+        {% else %}
+            <td></td>
+        {% endif %}
+
 
     </tr>
     {% endfor %}
@@ -77,6 +84,9 @@
             con=confirm("是否报名此项目？"+name+' '+event);
                 if (!con)return;
             post('/competition_register/',{name:name,event:event});
+        }
+        else if(document.getElementById(id).innerText == '查看排行'){
+            post('/competition_ranking/',{name:name,event:event});
         }
     }
     </script>

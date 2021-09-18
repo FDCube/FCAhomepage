@@ -28,8 +28,10 @@ def update_record(competitor):  # 对于一个人，在校记录中更新他的�
             print(event)
             single = minute_to_sec(competitor.records[' '+event].single)
             single = decimal.Decimal(single)
+            if competitor.records[' ' + event].average=='DNF':
+                continue
             average = minute_to_sec(competitor.records[' ' + event].average)
-            if average != 'DNF': average = decimal.Decimal(average)
+            average = decimal.Decimal(average)
             # 单次，发起查询，看看是否比校记录高
             sql = "SELECT time_single " \
                   "FROM record " \
@@ -44,8 +46,6 @@ def update_record(competitor):  # 对于一个人，在校记录中更新他的�
                 cursor.execute(sql, [single, competitor.name,event])
                 cursor.execute("""drop table if exists test""")  # 不进行这步插不进去
 
-            if average == 'DNF':  #
-                continue
             # 平均，和单次一样处理
             sql = "SELECT time_average " \
                   "FROM record " \
@@ -63,9 +63,11 @@ def update_record(competitor):  # 对于一个人，在校记录中更新他的�
 
 
 if __name__ == '__main__':
-    competitor = get_competitor_by_wca_id("2013MAZA01")
+    ids=["2017DENG14","2018HEJI02"]
     #single = competitor.records[' 四阶'].single
     #if ':' in single: print(minute_to_sec(single))
-    update_record(competitor)
+    for id in ids:
+        competitor = get_competitor_by_wca_id(id)
+        update_record(competitor)
 
 
