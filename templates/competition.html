@@ -78,7 +78,7 @@
         else if(document.getElementById(id).innerText == '参加比赛'){
             con=confirm("是否参加比赛？"+name+' '+event);
                 if (!con)return;
-            post('/event/',{event:event});
+            post('/event/',{name:name,event:event});
         }
         else if(document.getElementById(id).innerText == '报名'){
             con=confirm("是否报名此项目？"+name+' '+event);

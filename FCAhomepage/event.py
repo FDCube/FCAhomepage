@@ -38,6 +38,8 @@ def event(request):
         event_now = request.session['event']  # 如果session里有event，更改event_now
     if request.POST:  # 如果接受了下拉框选择或线上赛页面直接进入的post，改变event_now
         event_now = request.POST.get('event')
+        #competition_name = request.POST.get('name')  # 直接把competition_name改了吧
+        #print(competition_name)
     request.session['event'] = event_now
 
     # 传入已经计时的成绩

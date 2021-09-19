@@ -130,7 +130,7 @@ def competition_cancel(request):
     return redirect('/competition')
 
 def competition_ranking(request):
-    student_number = request.session['student_number']
+    #student_number = request.session['student_number']
     competition_name = request.POST.get('name')
     competition_turn = 1
     cube_event = request.POST.get('event')
