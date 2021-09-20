@@ -9,7 +9,7 @@ connection = pymysql.connect(host='pc-bp18rn0tqu85a1600-public.rwlb.rds.aliyuncs
                        passwd='e939cbe1ea4a_#@Aa',
                        db='polardb_mysql_zl2048')
 cursor = connection.cursor()
-EventList = ['三阶','二阶','四阶','五阶','六阶', '七阶','单手','三盲','四盲','金字塔','斜转','SQ1','魔表','最少步']
+EventList = ['三阶','二阶','四阶','五阶','六阶', '七阶','单手','三盲','四盲','金字塔','斜转','SQ1','五魔方', '魔表','最少步']
 
 '''测试
 for event in EventList:
@@ -63,7 +63,7 @@ def update_record(competitor):  # 对于一个人，在校记录中更新他的�
 
 
 if __name__ == '__main__':
-    ids=["2017DENG14","2018HEJI02"]
+    ids=["2016LUYI02"]
     #single = competitor.records[' 四阶'].single
     #if ':' in single: print(minute_to_sec(single))
     for id in ids:

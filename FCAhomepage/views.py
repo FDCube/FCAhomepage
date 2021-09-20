@@ -4,7 +4,7 @@ from database.models import Record
 from FCAhomepage.core.utils import minute_to_sec, sec_to_minute
 import re
 
-EventList = ['三阶', '二阶', '四阶', '五阶', '六阶', '七阶', '单手', '三盲', '四盲', '金字塔', '斜转', 'SQ1', '魔表', '最少步']
+EventList = ['三阶', '二阶', '四阶', '五阶', '六阶', '七阶', '单手', '三盲', '四盲', '金字塔', '斜转', 'SQ1','五魔方', '魔表', '最少步']
 
 html_hello = """
 <h5>hello world!</h>
@@ -47,6 +47,7 @@ def logout(request):
 def record(request):
     events1 = []
     events = Record.objects.all()
+    print(events)
     events = list(events)
     for i in EventList:
         for event in events:
